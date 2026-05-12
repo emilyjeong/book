@@ -1,245 +1,958 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0a0a09">
-  <title>부부 포트폴리오</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="config.js"></script>
+<title>📚 독서 아카이브</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* 배경 */
+  --bg:        #0a0a09;
+  --surface:   #0f0f0e;
+  --card:      #161513;
+  --card-hi:   #1c1b19;
+  /* 테두리 */
+  --border:     #2a2926;
+  --border-mid: #353330;
+  /* 텍스트 */
+  --ink:     #f0ede8;
+  --ink-mid: #9a9690;
+  --ink-dim: #565250;
+  /* 의미색 */
+  --pos:    #00c98a;
+  --neg:    #f04d62;
+  --accent: #e8b800;
+  --info:   #5aabf0;
+  --purple: #b8a8f0;
+  /* 레이아웃 */
+  --radius:    14px;
+  --radius-sm:  8px;
+  --radius-xs:  6px;
+  --pad:        16px;
+  --gap:        10px;
+  /* 폰트 */
+  --font-sans: 'Pretendard', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: #0a0a09 !important;
+  color: #f0ede8 !important;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  font-size: 14px;
+}
 
-  <link rel="stylesheet" href="./assets/css/style.css">
+/* ─── HEADER ─── */
+.header {
+  padding: 24px var(--pad) 0;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  background-color: rgba(15,15,14,0.94) !important;
+  backdrop-filter: blur(12px);
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 34px; height: 34px;
+  background: rgba(90,171,240,0.1);
+  border: 1px solid rgba(90,171,240,0.2);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.logo-text { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--ink); }
+.logo-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); margin-top: 2px; letter-spacing: 0.5px; }
+
+.stat-mini { text-align: right; }
+.stat-mini-num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-mini-label { font-family: var(--font-sans); font-size: 10px; color: var(--ink-dim); margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+.header-btns { display: flex; gap: var(--gap); margin-bottom: 12px; }
+.btn-primary {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  background: var(--accent); color: #000;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary {
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  background: rgba(90,171,240,0.12);
+  border: 1px solid rgba(90,171,240,0.25);
+  color: var(--info); font-family: var(--font-sans); font-size: 13px; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { background: rgba(90,171,240,0.18); }
+
+.tabs { display: flex; }
+.tab {
+  padding: 10px 18px; font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+  color: var(--ink-dim); border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.tab:hover { color: var(--ink-mid); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ─── CONTENT ─── */
+.content { padding: 24px var(--pad); max-width: 1200px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ─── FILTER BAR ─── */
+.filter-bar { display: flex; align-items: center; gap: var(--gap); margin-bottom: 20px; flex-wrap: wrap; }
+.search-wrap { position: relative; flex:1; min-width:160px; max-width:260px; }
+.search-wrap input {
+  width:100%; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px 8px 30px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none;
+}
+.search-wrap input:focus { border-color: var(--border-mid); }
+.search-wrap input::placeholder { color: var(--ink-dim); }
+.si { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--ink-dim); font-size:12px; }
+
+.chip {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 12px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.chip:hover { border-color: var(--border-mid); color: var(--ink); }
+.chip.on { border-color: var(--accent); color: var(--accent); background: rgba(232,184,0,0.08); }
+
+/* ─── 내 서재 그리드 ─── */
+.book-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap: var(--gap); }
+.book-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.book-card:hover { border-color: var(--border-mid); transform: translateY(-2px); }
+.book-cover {
+  width:100%; height:150px; background: var(--card-hi);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.book-cover img { width:100%; height:100%; object-fit:cover; }
+.book-cover-ph { font-size:36px; opacity:0.2; }
+.cat-bar { height:3px; }
+.book-body { padding: var(--pad); }
+.cat-tag {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 7px; border-radius: var(--radius-xs); border: 1px solid;
+  display: inline-flex; margin-bottom: var(--gap);
+}
+.book-title { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 3px; }
+.book-author { font-family: var(--font-sans); font-size: 13px; color: var(--ink-mid); margin-bottom: var(--gap); }
+.book-period { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.book-footer {
+  padding: 8px var(--pad); background: var(--surface); border-top: 1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.qcount { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.qcount span { color: var(--accent); font-weight: 700; }
+
+/* ─── 월별 기록 ─── */
+.month-group { margin-bottom: 32px; }
+.month-header {
+  display: flex; align-items: baseline; gap: var(--gap);
+  margin-bottom: 12px; padding-bottom: var(--gap);
+  border-bottom: 1px solid var(--border);
+}
+.month-label { font-family: var(--font-sans); font-size: 20px; font-weight: 700; color: var(--ink); }
+.month-count { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
+.month-books { display: flex; flex-direction: column; gap: var(--gap); }
+.month-book-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: var(--pad); cursor: pointer;
+  transition: border-color 0.15s;
+}
+.month-book-row:hover { border-color: var(--border-mid); }
+.month-cover {
+  width: 44px; height: 60px; border-radius: var(--radius-xs);
+  background: var(--card-hi); display: flex; align-items: center; justify-content: center;
+  font-size: 20px; opacity: 0.4; flex-shrink: 0; overflow: hidden;
+}
+.month-cover img { width:100%; height:100%; object-fit:cover; opacity:1; }
+.month-book-info { flex: 1; min-width: 0; }
+.month-book-title { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.month-book-author { font-family: var(--font-sans); font-size: 13px; color: var(--ink-mid); margin-bottom: 5px; }
+.month-book-period { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.month-book-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.month-qcount { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.month-qcount span { color: var(--accent); font-weight: 700; }
+
+/* ─── 문장 피드 ─── */
+.quote-feed { columns: 3; column-gap: var(--gap); }
+@media (max-width: 900px) { .quote-feed { columns: 2; } }
+@media (max-width: 580px) { .quote-feed { columns: 1; } }
+.quote-card {
+  break-inside: avoid; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: var(--pad); margin-bottom: var(--gap); cursor: pointer;
+  transition: border-color 0.15s; position: relative;
+}
+.quote-card:hover { border-color: var(--border-mid); }
+.qmark {
+  font-family: var(--font-sans); font-size: 40px; font-weight: 700;
+  line-height: 0.7; color: var(--accent); opacity: 0.25;
+  display: block; margin-bottom: var(--gap);
+}
+.qtext {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 400;
+  line-height: 1.75; color: var(--ink); margin-bottom: 14px;
+}
+.qsource { display: flex; align-items: center; gap: 8px; }
+.qdot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.qbook { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--ink-mid); }
+.qauthor { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.qtag {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 7px; border-radius: var(--radius-xs);
+}
+
+/* ─── 카테고리 색상 ─── */
+.c-invest  { background:rgba(0,201,138,0.1);   color:var(--pos);    border-color:rgba(0,201,138,0.3);   }
+.c-phil    { background:rgba(184,168,240,0.1); color:var(--purple); border-color:rgba(184,168,240,0.3); }
+.c-self    { background:rgba(90,171,240,0.1);  color:var(--info);   border-color:rgba(90,171,240,0.3);  }
+.c-lit     { background:rgba(232,184,0,0.1);   color:var(--accent); border-color:rgba(232,184,0,0.3);   }
+.c-science { background:rgba(240,77,98,0.1);   color:var(--neg);    border-color:rgba(240,77,98,0.3);   }
+.c-other   { background:rgba(154,150,144,0.1); color:var(--ink-mid);border-color:rgba(154,150,144,0.3); }
+.sp-invest  { background: var(--pos); }
+.sp-phil    { background: var(--purple); }
+.sp-self    { background: var(--info); }
+.sp-lit     { background: var(--accent); }
+.sp-science { background: var(--neg); }
+.sp-other   { background: var(--ink-dim); }
+
+/* ─── 모달 ─── */
+.backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.75); z-index:100;
+  align-items:center; justify-content:center;
+}
+.backdrop.open { display:flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border-mid);
+  border-radius: var(--radius); width: 520px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto; padding: 24px;
+}
+.modal-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 20px;
+}
+.modal-title { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--ink); }
+.modal-x {
+  width: 28px; height: 28px; border-radius: var(--radius-xs);
+  background: var(--card-hi); border: 1px solid var(--border);
+  color: var(--ink-mid); font-size: 16px; cursor: pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-x:hover { color: var(--ink); }
+.mlabel {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.msec { margin-bottom: 16px; }
+.mrow { display:flex; gap: var(--gap); }
+.minput {
+  flex:1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none;
+}
+.minput:focus { border-color: var(--border-mid); }
+.minput::placeholder { color: var(--ink-dim); }
+.mselect {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 8px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none; cursor: pointer;
+}
+.mselect option { background: var(--surface); }
+.mbtn {
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  background: var(--card-hi); border: 1px solid var(--border-mid);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.mbtn:hover { color: var(--ink); }
+
+.sresults {
+  margin-top: 8px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; display: none;
+}
+.sitem {
+  display:flex; gap: 11px; padding: 10px 12px;
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s;
+}
+.sitem:last-child { border-bottom: none; }
+.sitem:hover { background: var(--card); }
+.scover {
+  width:34px; height:46px; border-radius:3px; flex-shrink:0;
+  background: var(--card-hi); display:flex; align-items:center; justify-content:center; font-size:16px; overflow:hidden;
+}
+.scover img { width:100%; height:100%; object-fit:cover; }
+.sinfo { flex:1; min-width:0; }
+.stitle { font-family: var(--font-sans); font-size:13px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sauthor { font-family: var(--font-sans); font-size:12px; color:var(--ink-mid); margin-top:2px; }
+.scat { font-family: var(--font-mono); font-size:10px; color:var(--info); margin-top:3px; }
+
+.selbook {
+  display:none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px; gap: 12px; align-items:center;
+  margin-bottom: 16px;
+}
+.selbook.show { display:flex; }
+.selcover {
+  width:42px; height:58px; border-radius: var(--radius-xs); flex-shrink:0;
+  background: var(--card-hi); display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden;
+}
+.selcover img { width:100%; height:100%; object-fit:cover; }
+.selinfo { flex:1; }
+.seltitle { font-family: var(--font-sans); font-size:14px; font-weight:700; color:var(--ink); }
+.selauthor { font-family: var(--font-sans); font-size:13px; color:var(--ink-mid); margin-top:2px; }
+.selcat { font-size:11px; font-weight:600; margin-top:5px; padding:2px 7px; border-radius:var(--radius-xs); border:1px solid; display:inline-flex; text-transform:uppercase; letter-spacing:0.4px; }
+.chgbtn { background:none; border:none; color:var(--ink-dim); font-size:11px; cursor:pointer; flex-shrink:0; }
+
+.date-row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; }
+.date-selects { display:flex; gap:5px; }
+.darrow { text-align:center; color:var(--ink-dim); padding-top:18px; font-family:var(--font-mono); }
+
+.mtextarea {
+  width:100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  color: var(--ink); font-size: 13px; line-height: 1.6;
+  font-family: var(--font-sans); outline: none;
+  resize: vertical; min-height: 72px;
+}
+.mtextarea:focus { border-color: var(--border-mid); }
+.mtextarea::placeholder { color: var(--ink-dim); }
+
+.modal-ft {
+  display:flex; gap: var(--gap); justify-content:flex-end;
+  margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+.btn-cancel {
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  background: transparent; border: 1px solid var(--border);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 13px; cursor: pointer;
+}
+.btn-save {
+  padding: 8px 20px; border-radius: var(--radius-sm);
+  background: var(--accent); border: none;
+  color: #000; font-family: var(--font-sans); font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+.preview-list { display:flex; flex-direction:column; gap:7px; max-height:180px; overflow-y:auto; }
+.pitem {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); padding: 9px 11px;
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--ink); line-height: 1.6; position: relative;
+}
+.pnum {
+  position:absolute; top:6px; right:8px;
+  font-family: var(--font-mono); font-size:10px; color:var(--ink-dim);
+}
+</style>
 </head>
 <body>
 
-  <!-- ─── 탭 헤더 ──────────────────────────────────────────── -->
-  <nav class="tab-bar">
-    <button class="tab-btn active" data-tab="couple">부부 합산 💑</button>
-    <button class="tab-btn" data-tab="wife">아내 포트폴리오 👰</button>
-    <button class="tab-btn" data-tab="husband">남편 포트폴리오 🤵</button>
-  </nav>
-
-  <!-- ─── 로딩 / 에러 ──────────────────────────────────────── -->
-  <div id="globalLoader" class="loader">데이터 불러오는 중…</div>
-  <div id="globalError" class="error-banner hidden"></div>
-
-  <!-- ─── 부부 합산 탭 ─────────────────────────────────────── -->
-  <section class="tab-panel active" id="tab-couple">
-    <h1 class="page-title couple-color">부부 합산 자산 💕🌹</h1>
-
-    <div class="card">
-      <div class="card-label">합산 총 평가금액</div>
-      <div class="card-value couple-color" id="coupleTotalValue">—</div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">합산 평가손익</div>
-      <div class="card-value" id="coupleTotalPnl">—</div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">기준일</div>
-      <div class="card-value-sm" id="coupleAsOf">—</div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">자산 비중</h2>
-      <div class="chart-wrap chart-wrap--donut">
-        <canvas id="coupleSectorChart"></canvas>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <div>
+        <div class="logo-text">독서 아카이브</div>
+        <div class="logo-sub">READING ARCHIVE</div>
       </div>
     </div>
-
-    <div class="card">
-      <h2 class="section-title">자산 추이</h2>
-      <div class="section-sub">부부 합산 월별 평가금액 (Unit: 만원)</div>
-      <div class="chart-wrap">
-        <canvas id="coupleAssetChart"></canvas>
+    <div style="display:flex;gap:24px;">
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sTotalBooks">8</div>
+        <div class="stat-mini-label">읽은 책</div>
       </div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">월별 수익률 추이</h2>
-      <div class="section-sub">각자 평가손익률 변화</div>
-      <div class="chart-wrap">
-        <canvas id="coupleReturnChart"></canvas>
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sTotalQuotes">12</div>
+        <div class="stat-mini-label">문장</div>
       </div>
-    </div>
-  </section>
-
-  <!-- ─── 아내 탭 ─────────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-wife">
-    <h1 class="page-title wife-color">아내 포트폴리오</h1>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-label">총 평가금액</div>
-        <div class="card-value-md wife-color" id="wifeTotalValue">—</div>
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sYearBooks">5</div>
+        <div class="stat-mini-label">2026년</div>
       </div>
-      <div class="card">
-        <div class="card-label">총 투입금액</div>
-        <div class="card-value-md text-secondary" id="wifeTotalCost">—</div>
-      </div>
-      <div class="card">
-        <div class="card-label">평가손익</div>
-        <div class="card-value-md" id="wifeTotalPnl">—</div>
-      </div>
-      <div class="card">
-        <div class="card-label">수익률</div>
-        <div class="card-value-md warning-color" id="wifeReturn">—</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">자산 비중</h2>
-      <div class="chart-wrap chart-wrap--donut">
-        <canvas id="wifeSectorChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">투입금 vs 평가금</h2>
-      <div class="chart-wrap">
-        <canvas id="wifeCostVsValueChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-row">
-        <h2 class="section-title">보유 종목</h2>
-        <button class="btn-primary wife-bg" data-action="add" data-who="wife">+ 종목 추가</button>
-      </div>
-      <div class="section-sub" id="wifeAsOf">기준일: —</div>
-      <div class="holdings-table" id="wifeHoldings"></div>
-    </div>
-  </section>
-
-  <!-- ─── 남편 탭 ─────────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-husband">
-    <h1 class="page-title husband-color">남편 포트폴리오</h1>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-label">총 평가금액</div>
-        <div class="card-value-md husband-color" id="husbandTotalValue">—</div>
-      </div>
-      <div class="card">
-        <div class="card-label">총 투입금액</div>
-        <div class="card-value-md text-secondary" id="husbandTotalCost">—</div>
-      </div>
-      <div class="card">
-        <div class="card-label">평가손익</div>
-        <div class="card-value-md" id="husbandTotalPnl">—</div>
-      </div>
-      <div class="card">
-        <div class="card-label">수익률</div>
-        <div class="card-value-md warning-color" id="husbandReturn">—</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">자산 비중</h2>
-      <div class="chart-wrap chart-wrap--donut">
-        <canvas id="husbandSectorChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">투입금 vs 평가금</h2>
-      <div class="chart-wrap">
-        <canvas id="husbandCostVsValueChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-row">
-        <h2 class="section-title">보유 종목</h2>
-        <button class="btn-primary husband-bg" data-action="add" data-who="husband">+ 종목 추가</button>
-      </div>
-      <div class="section-sub" id="husbandAsOf">기준일: —</div>
-      <div class="holdings-table" id="husbandHoldings"></div>
-    </div>
-  </section>
-
-  <!-- ─── 모달: 종목 추가/수정 ────────────────────────────── -->
-  <div class="modal hidden" id="editModal">
-    <div class="modal-backdrop" data-close="1"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">종목 추가</h3>
-        <button class="modal-close" data-close="1">✕</button>
-      </div>
-      <form id="editForm" class="modal-body" autocomplete="off">
-        <input type="hidden" id="fld-mode" value="create">
-        <input type="hidden" id="fld-who" value="">
-
-        <label>종목명
-          <input type="text" id="fld-name" required placeholder="예: 삼성전자">
-        </label>
-
-        <label>티커
-          <div class="input-row">
-            <input type="text" id="fld-ticker" required placeholder="6자리 코드 또는 영문심볼">
-            <button type="button" class="btn-secondary" id="btn-findTicker">검색</button>
-          </div>
-        </label>
-
-        <label>계좌
-          <input type="text" id="fld-account" placeholder="예: 일반, ISA, 연금저축, IRP, CMA">
-        </label>
-
-        <label>시장
-          <select id="fld-market">
-            <option value="KR">KR (국내)</option>
-            <option value="US">US (해외)</option>
-          </select>
-        </label>
-
-        <div class="grid-2-tight">
-          <label>수량
-            <input type="number" id="fld-qty" required min="0" step="1" placeholder="0">
-          </label>
-          <label>평단가 (₩)
-            <input type="number" id="fld-avg" required min="0" step="1" placeholder="0">
-          </label>
-        </div>
-
-        <label>섹터
-          <select id="fld-sector">
-            <option value="반도체">반도체</option>
-            <option value="AI">AI</option>
-            <option value="지수">지수</option>
-            <option value="전력/원자력/에너지">전력/원자력/에너지</option>
-            <option value="자동차/로봇">자동차/로봇</option>
-            <option value="조선">조선</option>
-            <option value="방산/우주">방산/우주</option>
-            <option value="철강">철강</option>
-            <option value="금융">금융</option>
-            <option value="2차전지">2차전지</option>
-            <option value="기술">기술</option>
-            <option value="바이오">바이오</option>
-            <option value="기타" selected>기타</option>
-          </select>
-        </label>
-
-        <label>메모 (선택)
-          <input type="text" id="fld-memo" placeholder="">
-        </label>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-danger hidden" id="btn-delete">삭제</button>
-          <button type="submit" class="btn-primary" id="btn-save">저장</button>
-        </div>
-      </form>
     </div>
   </div>
+  <div class="header-btns">
+    <button class="btn-primary" onclick="openBookModal()">＋ 책 등록</button>
+    <button class="btn-secondary" onclick="openQuoteModal()">✍️ 문장 가져오기</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="sw('books',this)">📚 내 서재</div>
+    <div class="tab" onclick="sw('monthly',this)">📅 월별 기록</div>
+    <div class="tab" onclick="sw('quotes',this)">✍️ 문장 피드</div>
+  </div>
+</div>
 
-  <!-- ─── JS ──────────────────────────────────────────────── -->
-  <script src="./assets/js/config.js"></script>
-  <script src="./assets/js/api.js"></script>
-  <script src="./assets/js/charts.js"></script>
-  <script src="./assets/js/ui.js"></script>
-  <script src="./assets/js/app.js"></script>
+<div class="content">
+
+  <!-- ── 내 서재 ── -->
+  <div class="panel active" id="panel-books">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="제목, 저자 검색..." id="bSearch" oninput="filterBooks()">
+      </div>
+      <div class="chip on" onclick="setF('all',this)">전체</div>
+      <div class="chip" onclick="setF('invest',this)">💹 투자</div>
+      <div class="chip" onclick="setF('phil',this)">🧠 철학</div>
+      <div class="chip" onclick="setF('self',this)">🌱 자기계발</div>
+      <div class="chip" onclick="setF('lit',this)">✍️ 문학</div>
+      <div class="chip" onclick="setF('science',this)">🔬 과학</div>
+    </div>
+    <div class="book-grid" id="bookGrid"></div>
+  </div>
+
+  <!-- ── 월별 기록 ── -->
+  <div class="panel" id="panel-monthly">
+    <div id="monthlyView"></div>
+  </div>
+
+  <!-- ── 문장 피드 ── -->
+  <div class="panel" id="panel-quotes">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="문장, 책 제목 검색..." id="qSearch" oninput="filterQuotes()">
+      </div>
+      <div class="chip on" onclick="setQF('all',this)">전체</div>
+      <div class="chip" onclick="setQF('invest',this)">💹 투자</div>
+      <div class="chip" onclick="setQF('phil',this)">🧠 철학</div>
+      <div class="chip" onclick="setQF('self',this)">🌱 자기계발</div>
+      <div class="chip" onclick="setQF('lit',this)">✍️ 문학</div>
+      <div class="chip" onclick="setQF('science',this)">🔬 과학</div>
+    </div>
+    <div class="quote-feed" id="quoteFeed"></div>
+  </div>
+
+</div>
+
+<!-- ── 책 등록 모달 ── -->
+<div class="backdrop" id="bookBackdrop" onclick="closeOuter(event,'bookBackdrop')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">책 등록</div>
+      <button class="modal-x" onclick="closeBookModal()">×</button>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">책 검색 (알라딘)</div>
+      <div class="mrow">
+        <input class="minput" id="apiQ" type="text" placeholder="제목 또는 저자..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="mbtn" onclick="doSearch()">검색</button>
+      </div>
+      <div class="sresults" id="sResults"></div>
+    </div>
+
+    <div class="selbook" id="selBook">
+      <div class="selcover" id="selCoverWrap"><span>📖</span></div>
+      <div class="selinfo">
+        <div class="seltitle" id="selTitle">—</div>
+        <div class="selauthor" id="selAuthor">—</div>
+        <span class="selcat" id="selCat">—</span>
+      </div>
+      <button class="chgbtn" onclick="resetSel()">✕</button>
+    </div>
+
+    <div class="msec">
+      <div class="date-row">
+        <div class="date-grp">
+          <div class="mlabel">읽기 시작</div>
+          <div class="date-selects">
+            <select class="mselect" id="sy" style="flex:1.4;"></select>
+            <select class="mselect" id="sm" style="flex:1;"></select>
+          </div>
+        </div>
+        <div class="darrow">→</div>
+        <div class="date-grp">
+          <div class="mlabel">완독</div>
+          <div class="date-selects">
+            <select class="mselect" id="ey" style="flex:1.4;"></select>
+            <select class="mselect" id="em" style="flex:1;"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">메모 (선택)</div>
+      <textarea class="mtextarea" id="bMemo" placeholder="짧은 메모..."></textarea>
+    </div>
+
+    <div class="modal-ft">
+      <button class="btn-cancel" onclick="closeBookModal()">취소</button>
+      <button class="btn-save" onclick="saveBook()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 문장 가져오기 모달 ── -->
+<div class="backdrop" id="quoteBackdrop" onclick="closeOuter(event,'quoteBackdrop')">
+  <div class="modal" style="width:560px;">
+    <div class="modal-hd">
+      <div class="modal-title">✍️ 문장 가져오기</div>
+      <button class="modal-x" onclick="closeQuoteModal()">×</button>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">책 선택</div>
+      <select class="mselect" id="qBookSel" style="width:100%;"></select>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel" style="margin-bottom:6px;">
+        문장 붙여넣기
+        <span style="color:var(--text3);font-size:11px;margin-left:6px;">빈 줄로 구분 → 자동 분리</span>
+      </div>
+      <textarea class="mtextarea" id="rawQuotes" style="min-height:180px;font-family:'Libre Baskerville',serif;line-height:1.8;"
+        placeholder="첫 번째 문장.&#10;&#10;두 번째 문장.&#10;&#10;이렇게 붙여넣으면 자동으로 나눠져요."
+        oninput="previewQ()"></textarea>
+    </div>
+
+    <div id="qPreviewSec" style="display:none;" class="msec">
+      <div class="mlabel">
+        미리보기
+        <span id="qCount" style="color:var(--amber);font-family:'IBM Plex Mono',monospace;margin-left:6px;"></span>
+      </div>
+      <div class="preview-list" id="qPreviewList"></div>
+    </div>
+
+    <div class="modal-ft">
+      <button class="btn-cancel" onclick="closeQuoteModal()">취소</button>
+      <button class="btn-save" id="qSaveBtn" onclick="saveQuotes()" style="opacity:0.4;" disabled>저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── GAS URL (config.js에서 로드) ───
+const GAS_URL = (typeof CONFIG !== 'undefined') ? CONFIG.GAS_URL
+  : 'https://script.google.com/macros/s/AKfycbyoOSh-cRXMvH5448NYtYaLGXpTVsrG3qA97GOn6_i5tjgPkcXHeimNCyi5W0_2i_gGjQ/exec';
+
+// ─── 카테고리 ───
+const CAT = {
+  invest:  { label:"💹 투자",    cls:"c-invest",  sp:"sp-invest",  dot:"#00c98a" },
+  phil:    { label:"🧠 철학",    cls:"c-phil",    sp:"sp-phil",    dot:"#b8a8f0" },
+  self:    { label:"🌱 자기계발", cls:"c-self",    sp:"sp-self",    dot:"#5aabf0" },
+  lit:     { label:"✍️ 문학",    cls:"c-lit",     sp:"sp-lit",     dot:"#e8b800" },
+  science: { label:"🔬 과학",    cls:"c-science", sp:"sp-science", dot:"#f04d62" },
+  other:   { label:"📦 기타",    cls:"c-other",   sp:"sp-other",   dot:"#9a9690" },
+};
+
+let books = [], quotes = [];
+let fCat = 'all', fQCat = 'all';
+let selData = null;
+
+// ─── 로딩 표시 ───
+function showLoading(elId, msg='불러오는 중...') {
+  const el = document.getElementById(elId);
+  if (el) el.innerHTML = `<div style="color:var(--ink-dim);text-align:center;padding:48px;font-family:var(--font-mono);font-size:12px;">${msg}</div>`;
+}
+
+// ─── GAS API 호출 (JSONP - CORS 완전 우회) ───
+function jsonpGet(params) {
+  return new Promise(function(resolve, reject) {
+    var cbName = 'cb_' + Date.now();
+    var script  = document.createElement('script');
+    var timer   = setTimeout(function() {
+      delete window[cbName];
+      document.head.removeChild(script);
+      reject(new Error('timeout'));
+    }, 15000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timer);
+      delete window[cbName];
+      document.head.removeChild(script);
+      resolve(data);
+    };
+
+    params.callback = cbName;
+    script.src = GAS_URL + '?' + new URLSearchParams(params).toString();
+    script.onerror = function() {
+      clearTimeout(timer);
+      reject(new Error('script load error'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// GET → JSONP
+async function gasGet(params) {
+  return jsonpGet(params);
+}
+
+// POST → GET으로 변환 (JSONP)
+async function gasPost(body) {
+  var params = {
+    action: body.action,
+    data: encodeURIComponent(JSON.stringify(body.data || body))
+  };
+  return jsonpGet(params);
+}
+
+// ─── 초기 데이터 로드 ───
+async function loadAll() {
+  showLoading('bookGrid', '📚 서재 불러오는 중...');
+  showLoading('quoteFeed', '✍️ 문장 불러오는 중...');
+  try {
+    const [bRes, qRes] = await Promise.all([
+      gasGet({ action: 'getBooks' }),
+      gasGet({ action: 'getQuotes' }),
+    ]);
+    books  = (bRes.books  || []).map(b => ({ ...b, id: b.id?.toString() }));
+    quotes = (qRes.quotes || []).map(q => ({ ...q, bookId: q.bookId?.toString() }));
+  } catch(e) {
+    books = []; quotes = [];
+    console.error('데이터 로드 실패:', e);
+  }
+  updateStats();
+  filterBooks();
+  filterQuotes();
+}
+
+// ─── 통계 ───
+function updateStats() {
+  document.getElementById('sTotalBooks').textContent = books.length;
+  document.getElementById('sTotalQuotes').textContent = quotes.length;
+  document.getElementById('sYearBooks').textContent = books.filter(b => (b.end||'').startsWith('2026')).length;
+}
+
+// ─── 내 서재 ───
+function renderBooks(list) {
+  const g = document.getElementById('bookGrid');
+  if (!list.length) { g.innerHTML='<div style="color:var(--text3);grid-column:1/-1;text-align:center;padding:48px">결과 없음</div>'; return; }
+  g.innerHTML = list.map(b => {
+    const c = CAT[b.category]||CAT.other;
+    const qc = quotes.filter(q=>q.bookId===b.id).length;
+    const coverHtml = b.cover
+      ? `<img src="${b.cover}" alt="">`
+      : `<div class="book-cover-ph">📖</div>`;
+    return `
+    <div class="book-card">
+      <div class="book-cover">${coverHtml}</div>
+      <div class="cat-bar ${c.sp}"></div>
+      <div class="book-body">
+        <span class="cat-tag ${c.cls}">${c.label}</span>
+        <div class="book-title">${b.title}</div>
+        <div class="book-author">${b.author}</div>
+        <div class="book-period">${b.start||'—'} → ${b.end||'—'}</div>
+      </div>
+      <div class="book-footer">
+        <div class="qcount">문장 <span>${qc}</span>개</div>
+        <button onclick="event.stopPropagation();openQuoteModalForBook(${b.id})"
+          style="font-size:11px;padding:3px 8px;border-radius:6px;background:var(--amber-bg);border:1px solid rgba(232,164,74,0.3);color:var(--amber);cursor:pointer;">
+          + 문장
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setF(cat, el) {
+  fCat = cat;
+  document.querySelectorAll('#panel-books .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); filterBooks();
+}
+function filterBooks() {
+  const q = document.getElementById('bSearch').value.toLowerCase();
+  let list = books;
+  if (fCat !== 'all') list = list.filter(b=>b.category===fCat);
+  if (q) list = list.filter(b=>b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q));
+  renderBooks(list);
+}
+
+// ─── 월별 기록 ───
+function renderMonthly() {
+  const byMonth = {};
+  books.forEach(b => {
+    const key = b.end || b.start || '미완료';
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(b);
+  });
+  const keys = Object.keys(byMonth).sort((a,b) => b.localeCompare(a));
+
+  document.getElementById('monthlyView').innerHTML = keys.map(key => {
+    const blist = byMonth[key];
+    const [yr, mo] = key.split('-');
+    const label = key === '미완료' ? '미완료' : `${yr}년 ${parseInt(mo)}월`;
+    const rows = blist.map(b => {
+      const c = CAT[b.category]||CAT.other;
+      const qc = quotes.filter(q=>q.bookId===b.id).length;
+      const coverHtml = b.cover
+        ? `<img src="${b.cover}" alt="">`
+        : `📖`;
+      return `
+      <div class="month-book-row">
+        <div class="month-cover">${b.cover ? `<img src="${b.cover}" alt="">` : '📖'}</div>
+        <div class="month-book-info">
+          <div class="month-book-title">${b.title}</div>
+          <div class="month-book-author">${b.author}</div>
+          <div class="month-book-period">${b.start||'—'} ~ ${b.end||'—'}</div>
+        </div>
+        <div class="month-book-right">
+          <span class="cat-tag ${c.cls}" style="font-size:10px;padding:2px 7px;">${c.label}</span>
+          <div class="month-qcount">문장 <span>${qc}</span>개</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-label">${label}</div>
+        <div class="month-count">${blist.length}권</div>
+      </div>
+      <div class="month-books">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── 문장 피드 ───
+function renderQuotes(list) {
+  const feed = document.getElementById('quoteFeed');
+  if (!list.length) { feed.innerHTML='<div style="color:var(--text3);text-align:center;padding:48px">결과 없음</div>'; return; }
+  feed.innerHTML = list.map(q => {
+    const b = books.find(x=>x.id===q.bookId);
+    const c = CAT[q.category]||CAT.other;
+    return `
+    <div class="quote-card">
+      <span class="qtag ${c.cls}">${c.label}</span>
+      <span class="qmark">"</span>
+      <div class="qtext">${q.text}</div>
+      <div class="qsource">
+        <div class="qdot" style="background:${c.dot}"></div>
+        <div>
+          <div class="qbook">${b?b.title:''}</div>
+          <div class="qauthor">${b?b.author:''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setQF(cat, el) {
+  fQCat = cat;
+  document.querySelectorAll('#panel-quotes .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); filterQuotes();
+}
+function filterQuotes() {
+  const q = document.getElementById('qSearch').value.toLowerCase();
+  let list = quotes;
+  if (fQCat !== 'all') list = list.filter(qt=>qt.category===fQCat);
+  if (q) list = list.filter(qt => {
+    const b = books.find(x=>x.id===qt.bookId);
+    return qt.text.toLowerCase().includes(q)||(b&&b.title.toLowerCase().includes(q));
+  });
+  renderQuotes(list);
+}
+
+// ─── 탭 ───
+function sw(name, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name==='monthly') renderMonthly();
+}
+
+// ─── 날짜 셀렉트 ───
+function fillDates() {
+  const yr = new Date().getFullYear();
+  ['sy','ey'].forEach(id => {
+    const s = document.getElementById(id);
+    s.innerHTML = '<option value="">연도</option>';
+    for (let y=yr;y>=yr-10;y--) s.innerHTML+=`<option value="${y}">${y}</option>`;
+  });
+  ['sm','em'].forEach(id => {
+    const s = document.getElementById(id);
+    s.innerHTML = '<option value="">월</option>';
+    for (let m=1;m<=12;m++) s.innerHTML+=`<option value="${String(m).padStart(2,'0')}">${m}월</option>`;
+  });
+}
+
+// ─── 책 등록 모달 ───
+function openBookModal() {
+  document.getElementById('bookBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeBookModal() {
+  document.getElementById('bookBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+  selData=null;
+  document.getElementById('selBook').classList.remove('show');
+  document.getElementById('sResults').style.display='none';
+  document.getElementById('sResults').innerHTML='';
+  document.getElementById('apiQ').value='';
+  document.getElementById('bMemo').value='';
+  ['sy','sm','ey','em'].forEach(id=>document.getElementById(id).value='');
+}
+function closeOuter(e, id) { if(e.target.id===id) { if(id==='bookBackdrop') closeBookModal(); else closeQuoteModal(); } }
+
+function pickBook(i) {
+  selData = window._sr[i];
+  document.getElementById('sResults').style.display='none';
+  const sb = document.getElementById('selBook');
+  sb.classList.add('show');
+  document.getElementById('selTitle').textContent = selData.title;
+  document.getElementById('selAuthor').textContent = selData.author;
+  const c = CAT[selData.category]||CAT.other;
+  const ct = document.getElementById('selCat');
+  ct.textContent = c.label; ct.className = `selcat ${c.cls}`;
+  const cw = document.getElementById('selCoverWrap');
+  cw.innerHTML = selData.cover ? `<img src="${selData.cover}" alt="">` : '<span>📖</span>';
+}
+
+function resetSel() {
+  selData=null;
+  document.getElementById('selBook').classList.remove('show');
+  document.getElementById('apiQ').value='';
+}
+
+async function saveBook() {
+  if (!selData) { alert('책을 선택해주세요!'); return; }
+  const sy = document.getElementById('sy').value;
+  const sm = document.getElementById('sm').value;
+  const ey = document.getElementById('ey').value;
+  const em = document.getElementById('em').value;
+  const data = {
+    title:       selData.title,
+    author:      selData.author,
+    category:    selData.category || 'other',
+    categoryRaw: selData.categoryRaw || '',
+    start:       (sy&&sm)?`${sy}-${sm}`:'',
+    end:         (ey&&em)?`${ey}-${em}`:'',
+    cover:       selData.cover || '',
+    memo:        document.getElementById('bMemo').value,
+  };
+  try {
+    const res = await gasPost({ action: 'saveBook', data });
+    if (res.success) {
+      books.unshift({ ...data, id: res.id });
+      updateStats(); filterBooks();
+      closeBookModal();
+    } else {
+      alert('저장 실패: ' + (res.error||'알 수 없는 오류'));
+    }
+  } catch(e) {
+    alert('저장 중 오류가 발생했어요.');
+  }
+}
+
+// ─── 문장 가져오기 모달 ───
+function openQuoteModal() {
+  fillQBookSel(null);
+  document.getElementById('rawQuotes').value='';
+  document.getElementById('qPreviewSec').style.display='none';
+  const btn = document.getElementById('qSaveBtn');
+  btn.disabled=true; btn.style.opacity='0.4';
+  document.getElementById('quoteBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function openQuoteModalForBook(bookId) {
+  openQuoteModal();
+  setTimeout(() => { document.getElementById('qBookSel').value = bookId; }, 50);
+}
+function closeQuoteModal() {
+  document.getElementById('quoteBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+}
+function fillQBookSel(preId) {
+  const sel = document.getElementById('qBookSel');
+  sel.innerHTML = '<option value="">책 선택...</option>';
+  books.forEach(b => sel.innerHTML+=`<option value="${b.id}">${b.title} — ${b.author}</option>`);
+  if (preId) sel.value = preId;
+}
+function previewQ() {
+  const raw = document.getElementById('rawQuotes').value;
+  const parsed = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
+  const sec = document.getElementById('qPreviewSec');
+  const btn = document.getElementById('qSaveBtn');
+  if (!parsed.length) { sec.style.display='none'; btn.disabled=true; btn.style.opacity='0.4'; return; }
+  sec.style.display='block';
+  document.getElementById('qCount').textContent = `${parsed.length}개 인식됨`;
+  document.getElementById('qPreviewList').innerHTML = parsed.map((t,i)=>`
+    <div class="pitem"><span class="pnum">#${i+1}</span>${t}</div>`).join('');
+  btn.disabled=false; btn.style.opacity='1';
+}
+async function saveQuotes() {
+  const bookId = document.getElementById('qBookSel').value;
+  if (!bookId) { alert('책을 선택해주세요!'); return; }
+  const b = books.find(x=>x.id===bookId);
+  const raw = document.getElementById('rawQuotes').value;
+  const texts = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
+  try {
+    const res = await gasPost({
+      action: 'saveQuotes',
+      data: { bookId, bookTitle: b?.title||'', category: b?.category||'other', texts }
+    });
+    if (res.success) {
+      texts.forEach(text => quotes.push({ text, bookId, category: b?.category||'other' }));
+      updateStats(); filterQuotes();
+      closeQuoteModal();
+      const btn = document.querySelector('.btn-secondary');
+      const orig = btn.textContent;
+      btn.textContent = `✅ ${texts.length}개 저장됨`;
+      setTimeout(()=>btn.textContent=orig, 2000);
+    } else {
+      alert('저장 실패: ' + (res.error||'알 수 없는 오류'));
+    }
+  } catch(e) {
+    alert('저장 중 오류가 발생했어요.');
+  }
+}
+
+function doSearch() {
+  const q = document.getElementById('apiQ').value.trim();
+  if (!q) return;
+  const el = document.getElementById('sResults');
+  el.style.display='block';
+  el.innerHTML='<div style="padding:12px;color:var(--ink-dim);font-size:13px;font-family:var(--font-mono);">검색 중...</div>';
+
+  gasGet({ action: 'search', q })
+    .then(res => {
+      const results = res.results || [];
+      window._sr = results;
+      if (!results.length) {
+        el.innerHTML='<div style="padding:12px;color:var(--ink-dim);font-size:13px;">검색 결과가 없어요.</div>';
+        return;
+      }
+      el.innerHTML = results.map((r,i) => `
+        <div class="sitem" onclick="pickBook(${i})">
+          <div class="scover">${r.cover ? `<img src="${r.cover}" alt="">` : '📖'}</div>
+          <div class="sinfo">
+            <div class="stitle">${r.title}</div>
+            <div class="sauthor">${r.author}</div>
+            <div class="scat">${(CAT[r.category]||CAT.other).label}</div>
+          </div>
+        </div>`).join('');
+    })
+    .catch((err) => {
+      el.innerHTML=`<div style="padding:12px;color:var(--neg);font-size:13px;">오류: ${err.message}</div>`;
+    });
+}
+
+// ─── 초기화 ───
+fillDates();
+loadAll();
+</script>
 </body>
 </html>
