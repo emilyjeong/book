@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="config.js"></script>
+<title>📚 독서 아카이브</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080c18;
+  --bg2:      #0c1022;
+  --card:     #111628;
+  --card2:    #161d32;
+  --border:   #1e2640;
+  --border2:  #2a3358;
+  --text:     #dde2f0;
+  --text2:    #8892b0;
+  --text3:    #4a5270;
+  --amber:    #e8a44a;
+  --amber-bg: rgba(232,164,74,0.08);
+  --green:    #3ecf8e;
+  --blue:     #5b9cf6;
+  --pink:     #e879a0;
+  --purple:   #9b7fe8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: #080c18 !important;
+  color: #dde2f0 !important;
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ─── HEADER ─── */
+.header {
+  padding: 28px 32px 0;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(91,156,246,0.04) 0%, transparent 100%);
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(12px);
+  background-color: rgba(8,12,24,0.92) !important;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.logo { display: flex; align-items: center; gap: 11px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: rgba(91,156,246,0.1);
+  border: 1px solid rgba(91,156,246,0.2);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.logo-text { font-family: 'Libre Baskerville', serif; font-size: 18px; }
+.logo-sub { font-size: 10px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+
+.header-right { display: flex; align-items: center; gap: 20px; }
+.stat-mini { text-align: right; }
+.stat-mini-num { font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: var(--amber); line-height: 1; }
+.stat-mini-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+.header-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+.btn-primary {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--amber); color: #000;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary {
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--card2); border: 1px solid var(--border2);
+  color: var(--text2); font-size: 13px; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { color: var(--text); }
+
+.tabs { display: flex; }
+.tab {
+  padding: 10px 20px; font-size: 13px; font-weight: 500;
+  color: var(--text3); border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+
+/* ─── CONTENT ─── */
+.content { padding: 28px 32px; max-width: 1200px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ─── FILTER BAR ─── */
+.filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+.search-wrap { position: relative; flex:1; min-width:160px; max-width:260px; }
+.search-wrap input {
+  width:100%; background:var(--card); border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px 8px 32px;
+  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none;
+}
+.search-wrap input:focus { border-color:var(--border2); }
+.search-wrap input::placeholder { color:var(--text3); }
+.si { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:12px; }
+.chip {
+  padding:6px 12px; border-radius:20px; border:1px solid var(--border);
+  background:var(--card); color:var(--text2); font-size:12px; cursor:pointer;
+  transition:all 0.15s; white-space:nowrap;
+}
+.chip:hover { border-color:var(--border2); color:var(--text); }
+.chip.on { border-color:var(--amber); color:var(--amber); background:var(--amber-bg); }
+
+/* ─── 내 서재 그리드 ─── */
+.book-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; }
+.book-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; cursor:pointer;
+  transition:border-color 0.15s, transform 0.15s;
+}
+.book-card:hover { border-color:var(--border2); transform:translateY(-2px); }
+.book-cover {
+  width:100%; height:150px; background:var(--card2);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.book-cover img { width:100%; height:100%; object-fit:cover; }
+.book-cover-ph { font-size:36px; opacity:0.25; }
+.cat-bar { height:3px; }
+.book-body { padding:13px; }
+.cat-tag {
+  font-size:10px; padding:2px 7px; border-radius:6px; border:1px solid;
+  display:inline-flex; margin-bottom:7px;
+}
+.book-title { font-family:'Libre Baskerville',serif; font-size:14px; line-height:1.4; margin-bottom:3px; }
+.book-author { font-size:12px; color:var(--text3); margin-bottom:8px; }
+.book-period { font-size:11px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
+.book-footer {
+  padding:8px 13px; background:var(--bg2); border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.qcount { font-size:11px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
+.qcount span { color:var(--amber); }
+
+/* ─── 월별 기록 ─── */
+.month-group { margin-bottom: 36px; }
+.month-header {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.month-label {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 22px; color: var(--text);
+}
+.month-count { font-size: 12px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+.month-books { display: flex; flex-direction: column; gap: 10px; }
+.month-book-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.month-book-row:hover { border-color: var(--border2); }
+.month-cover {
+  width: 44px; height: 60px; border-radius: 4px;
+  object-fit: cover; background: var(--card2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; opacity: 0.4; flex-shrink: 0; overflow: hidden;
+}
+.month-cover img { width:100%; height:100%; object-fit:cover; opacity:1; }
+.month-book-info { flex: 1; min-width: 0; }
+.month-book-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.month-book-author { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.month-book-period {
+  font-size: 11px; color: var(--text3);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.month-book-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.month-qcount {
+  font-size: 11px; color: var(--text3);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.month-qcount span { color: var(--amber); }
+
+/* ─── 문장 피드 ─── */
+.quote-feed { columns: 3; column-gap: 16px; }
+@media (max-width: 900px) { .quote-feed { columns: 2; } }
+@media (max-width: 580px) { .quote-feed { columns: 1; } }
+.quote-card {
+  break-inside: avoid; background: var(--card);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 16px; cursor: pointer;
+  transition: border-color 0.15s; position: relative;
+}
+.quote-card:hover { border-color: var(--border2); }
+.qmark {
+  font-family: 'Libre Baskerville', serif; font-size: 44px;
+  line-height: 0.6; color: var(--amber); opacity: 0.2;
+  display: block; margin-bottom: 10px;
+}
+.qtext {
+  font-family: 'Libre Baskerville', serif; font-size: 14px;
+  line-height: 1.75; color: var(--text); font-style: italic; margin-bottom: 14px;
+}
+.qsource { display: flex; align-items: center; gap: 8px; }
+.qdot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.qbook { font-size: 12px; color: var(--text2); }
+.qauthor { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+.qtag { position:absolute; top:13px; right:13px; font-size:10px; padding:2px 7px; border-radius:6px; }
+
+/* 카테고리 */
+.c-invest  { background:rgba(62,207,142,0.1);  color:#3ecf8e; border-color:rgba(62,207,142,0.25);  }
+.c-phil    { background:rgba(155,127,232,0.1); color:#9b7fe8; border-color:rgba(155,127,232,0.25); }
+.c-self    { background:rgba(91,156,246,0.1);  color:#5b9cf6; border-color:rgba(91,156,246,0.25);  }
+.c-lit     { background:rgba(232,164,74,0.1);  color:#e8a44a; border-color:rgba(232,164,74,0.25);  }
+.c-science { background:rgba(232,121,160,0.1); color:#e879a0; border-color:rgba(232,121,160,0.25); }
+.c-other   { background:rgba(136,146,176,0.1); color:#8892b0; border-color:rgba(136,146,176,0.25); }
+.sp-invest  { background:linear-gradient(90deg,#3ecf8e,#2aa870); }
+.sp-phil    { background:linear-gradient(90deg,#9b7fe8,#7555cc); }
+.sp-self    { background:linear-gradient(90deg,#5b9cf6,#3a70c8); }
+.sp-lit     { background:linear-gradient(90deg,#e8a44a,#c47e25); }
+.sp-science { background:linear-gradient(90deg,#e879a0,#b84d78); }
+.sp-other   { background:linear-gradient(90deg,#8892b0,#5a6080); }
+
+/* ─── 책 등록 모달 ─── */
+.backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.72); z-index:100;
+  align-items:center; justify-content:center;
+}
+.backdrop.open { display:flex; }
+.modal {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:16px; width:520px; max-width:95vw;
+  max-height:90vh; overflow-y:auto; padding:28px;
+}
+.modal-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:22px;
+}
+.modal-title { font-family:'Libre Baskerville',serif; font-size:18px; }
+.modal-x {
+  width:28px; height:28px; border-radius:6px;
+  background:var(--card2); border:1px solid var(--border);
+  color:var(--text2); font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-x:hover { color:var(--text); }
+.mlabel { font-size:12px; color:var(--text3); font-weight:500; margin-bottom:6px; }
+.msec { margin-bottom:18px; }
+.mrow { display:flex; gap:8px; }
+.minput {
+  flex:1; background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:9px 12px;
+  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none;
+}
+.minput:focus { border-color:var(--border2); }
+.minput::placeholder { color:var(--text3); }
+.mselect {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:9px 8px;
+  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none; cursor:pointer;
+}
+.mselect option { background:var(--bg2); }
+.mbtn {
+  padding:9px 14px; border-radius:8px;
+  background:var(--card2); border:1px solid var(--border2);
+  color:var(--text2); font-size:13px; cursor:pointer; white-space:nowrap;
+}
+.mbtn:hover { color:var(--text); }
+
+/* 검색 결과 */
+.sresults {
+  margin-top:8px; background:var(--bg2);
+  border:1px solid var(--border); border-radius:8px; overflow:hidden; display:none;
+}
+.sitem {
+  display:flex; gap:11px; padding:10px 12px;
+  border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.1s;
+}
+.sitem:last-child { border-bottom:none; }
+.sitem:hover { background:var(--card); }
+.scover {
+  width:34px; height:46px; border-radius:3px; flex-shrink:0;
+  background:var(--card); object-fit:cover;
+  display:flex; align-items:center; justify-content:center; font-size:16px; overflow:hidden;
+}
+.scover img { width:100%; height:100%; object-fit:cover; }
+.sinfo { flex:1; min-width:0; }
+.stitle { font-size:13px; color:var(--text); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sauthor { font-size:11px; color:var(--text3); margin-top:2px; }
+.scat { font-size:10px; color:var(--blue); margin-top:3px; }
+
+/* 선택된 책 */
+.selbook {
+  display:none; background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:12px; gap:12px; align-items:center;
+  margin-bottom:18px;
+}
+.selbook.show { display:flex; }
+.selcover {
+  width:42px; height:58px; border-radius:4px; flex-shrink:0;
+  object-fit:cover; background:var(--card);
+  display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden;
+}
+.selcover img { width:100%; height:100%; object-fit:cover; }
+.selinfo { flex:1; }
+.seltitle { font-size:14px; font-weight:600; color:var(--text); }
+.selauthor { font-size:12px; color:var(--text3); margin-top:2px; }
+.selcat { font-size:10px; margin-top:5px; padding:2px 7px; border-radius:6px; border:1px solid; display:inline-flex; }
+.chgbtn { background:none; border:none; color:var(--text3); font-size:11px; cursor:pointer; flex-shrink:0; }
+
+/* 날짜 */
+.date-row {
+  display:grid; grid-template-columns:1fr auto 1fr;
+  align-items:center; gap:8px;
+}
+.date-grp {}
+.date-selects { display:flex; gap:5px; }
+.darrow { text-align:center; color:var(--text3); padding-top:18px; }
+
+/* 메모 */
+.mtextarea {
+  width:100%; background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:10px 12px;
+  color:var(--text); font-size:13px; line-height:1.6;
+  font-family:'Pretendard',sans-serif; outline:none;
+  resize:vertical; min-height:72px;
+}
+.mtextarea:focus { border-color:var(--border2); }
+.mtextarea::placeholder { color:var(--text3); }
+
+.modal-ft {
+  display:flex; gap:8px; justify-content:flex-end;
+  margin-top:22px; padding-top:18px; border-top:1px solid var(--border);
+}
+.btn-cancel {
+  padding:9px 18px; border-radius:8px;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text2); font-size:13px; cursor:pointer;
+}
+.btn-save {
+  padding:9px 22px; border-radius:8px;
+  background:var(--amber); border:none;
+  color:#000; font-size:13px; font-weight:600; cursor:pointer;
+}
+
+/* 문장 가져오기 모달 */
+.preview-list {
+  display:flex; flex-direction:column; gap:7px;
+  max-height:180px; overflow-y:auto;
+}
+.pitem {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:7px; padding:9px 11px;
+  font-family:'Libre Baskerville',serif; font-size:13px;
+  font-style:italic; color:var(--text); line-height:1.6;
+  position:relative;
+}
+.pnum {
+  position:absolute; top:6px; right:8px;
+  font-size:10px; color:var(--text3);
+  font-style:normal; font-family:'IBM Plex Mono',monospace;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <div>
+        <div class="logo-text">독서 아카이브</div>
+        <div class="logo-sub">READING ARCHIVE</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;">
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sTotalBooks">8</div>
+        <div class="stat-mini-label">읽은 책</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sTotalQuotes">12</div>
+        <div class="stat-mini-label">문장</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-num" id="sYearBooks">5</div>
+        <div class="stat-mini-label">2026년</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-primary" onclick="openBookModal()">＋ 책 등록</button>
+    <button class="btn-secondary" onclick="openQuoteModal()">✍️ 문장 가져오기</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="sw('books',this)">📚 내 서재</div>
+    <div class="tab" onclick="sw('monthly',this)">📅 월별 기록</div>
+    <div class="tab" onclick="sw('quotes',this)">✍️ 문장 피드</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ── 내 서재 ── -->
+  <div class="panel active" id="panel-books">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="제목, 저자 검색..." id="bSearch" oninput="filterBooks()">
+      </div>
+      <div class="chip on" onclick="setF('all',this)">전체</div>
+      <div class="chip" onclick="setF('invest',this)">💹 투자</div>
+      <div class="chip" onclick="setF('phil',this)">🧠 철학</div>
+      <div class="chip" onclick="setF('self',this)">🌱 자기계발</div>
+      <div class="chip" onclick="setF('lit',this)">✍️ 문학</div>
+      <div class="chip" onclick="setF('science',this)">🔬 과학</div>
+    </div>
+    <div class="book-grid" id="bookGrid"></div>
+  </div>
+
+  <!-- ── 월별 기록 ── -->
+  <div class="panel" id="panel-monthly">
+    <div id="monthlyView"></div>
+  </div>
+
+  <!-- ── 문장 피드 ── -->
+  <div class="panel" id="panel-quotes">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="문장, 책 제목 검색..." id="qSearch" oninput="filterQuotes()">
+      </div>
+      <div class="chip on" onclick="setQF('all',this)">전체</div>
+      <div class="chip" onclick="setQF('invest',this)">💹 투자</div>
+      <div class="chip" onclick="setQF('phil',this)">🧠 철학</div>
+      <div class="chip" onclick="setQF('self',this)">🌱 자기계발</div>
+      <div class="chip" onclick="setQF('lit',this)">✍️ 문학</div>
+      <div class="chip" onclick="setQF('science',this)">🔬 과학</div>
+    </div>
+    <div class="quote-feed" id="quoteFeed"></div>
+  </div>
+
+</div>
+
+<!-- ── 책 등록 모달 ── -->
+<div class="backdrop" id="bookBackdrop" onclick="closeOuter(event,'bookBackdrop')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">책 등록</div>
+      <button class="modal-x" onclick="closeBookModal()">×</button>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">책 검색 (알라딘)</div>
+      <div class="mrow">
+        <input class="minput" id="apiQ" type="text" placeholder="제목 또는 저자..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="mbtn" onclick="doSearch()">검색</button>
+      </div>
+      <div class="sresults" id="sResults"></div>
+    </div>
+
+    <div class="selbook" id="selBook">
+      <div class="selcover" id="selCoverWrap"><span>📖</span></div>
+      <div class="selinfo">
+        <div class="seltitle" id="selTitle">—</div>
+        <div class="selauthor" id="selAuthor">—</div>
+        <span class="selcat" id="selCat">—</span>
+      </div>
+      <button class="chgbtn" onclick="resetSel()">✕</button>
+    </div>
+
+    <div class="msec">
+      <div class="date-row">
+        <div class="date-grp">
+          <div class="mlabel">읽기 시작</div>
+          <div class="date-selects">
+            <select class="mselect" id="sy" style="flex:1.4;"></select>
+            <select class="mselect" id="sm" style="flex:1;"></select>
+          </div>
+        </div>
+        <div class="darrow">→</div>
+        <div class="date-grp">
+          <div class="mlabel">완독</div>
+          <div class="date-selects">
+            <select class="mselect" id="ey" style="flex:1.4;"></select>
+            <select class="mselect" id="em" style="flex:1;"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">메모 (선택)</div>
+      <textarea class="mtextarea" id="bMemo" placeholder="짧은 메모..."></textarea>
+    </div>
+
+    <div class="modal-ft">
+      <button class="btn-cancel" onclick="closeBookModal()">취소</button>
+      <button class="btn-save" onclick="saveBook()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 문장 가져오기 모달 ── -->
+<div class="backdrop" id="quoteBackdrop" onclick="closeOuter(event,'quoteBackdrop')">
+  <div class="modal" style="width:560px;">
+    <div class="modal-hd">
+      <div class="modal-title">✍️ 문장 가져오기</div>
+      <button class="modal-x" onclick="closeQuoteModal()">×</button>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel">책 선택</div>
+      <select class="mselect" id="qBookSel" style="width:100%;"></select>
+    </div>
+
+    <div class="msec">
+      <div class="mlabel" style="margin-bottom:6px;">
+        문장 붙여넣기
+        <span style="color:var(--text3);font-size:11px;margin-left:6px;">빈 줄로 구분 → 자동 분리</span>
+      </div>
+      <textarea class="mtextarea" id="rawQuotes" style="min-height:180px;font-family:'Libre Baskerville',serif;line-height:1.8;"
+        placeholder="첫 번째 문장.&#10;&#10;두 번째 문장.&#10;&#10;이렇게 붙여넣으면 자동으로 나눠져요."
+        oninput="previewQ()"></textarea>
+    </div>
+
+    <div id="qPreviewSec" style="display:none;" class="msec">
+      <div class="mlabel">
+        미리보기
+        <span id="qCount" style="color:var(--amber);font-family:'IBM Plex Mono',monospace;margin-left:6px;"></span>
+      </div>
+      <div class="preview-list" id="qPreviewList"></div>
+    </div>
+
+    <div class="modal-ft">
+      <button class="btn-cancel" onclick="closeQuoteModal()">취소</button>
+      <button class="btn-save" id="qSaveBtn" onclick="saveQuotes()" style="opacity:0.4;" disabled>저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── 데이터 ───
+const BOOKS = [
+  { id:1, title:"현명한 투자자", author:"벤저민 그레이엄", category:"invest",
+    start:"2026-03", end:"2026-04", cover:"", memo:"투자의 바이블." },
+  { id:2, title:"신호와 소음", author:"네이트 실버", category:"science",
+    start:"2026-03", end:"2026-04", cover:"", memo:"예측의 한계와 가능성." },
+  { id:3, title:"생각에 관한 생각", author:"대니얼 카너먼", category:"phil",
+    start:"2025-12", end:"2026-01", cover:"", memo:"시스템1과 시스템2." },
+  { id:4, title:"불안", author:"알랭 드 보통", category:"lit",
+    start:"2026-04", end:"2026-05", cover:"", memo:"지위 불안의 근원." },
+  { id:5, title:"인생을 위한 최소한의 생각", author:"미상", category:"self",
+    start:"2026-04", end:"2026-04", cover:"", memo:"" },
+  { id:6, title:"돈의 심리학", author:"모건 하우절", category:"invest",
+    start:"2025-07", end:"2025-08", cover:"", memo:"돈은 행동이다." },
+  { id:7, title:"아주 작은 습관의 힘", author:"제임스 클리어", category:"self",
+    start:"2025-05", end:"2025-06", cover:"", memo:"시스템이 목표를 이긴다." },
+  { id:8, title:"채식주의자", author:"한강", category:"lit",
+    start:"2025-09", end:"2025-09", cover:"", memo:"불편하지만 멈출 수 없었다." },
+];
+
+const QUOTES = [
+  { text:"투자에서 가장 위험한 문장은 '이번엔 다르다'는 말이다.", bookId:1, category:"invest" },
+  { text:"미스터 마켓은 당신의 주인이 아니라 하인이다. 그의 가격을 이용하라, 지배받지 말고.", bookId:1, category:"invest" },
+  { text:"우리는 우리가 생각하는 것보다 훨씬 적게 생각한다. 대부분은 그냥 느끼는 것이다.", bookId:3, category:"phil" },
+  { text:"예측이란 틀리기 위해 존재하는 것이 아니라, 불확실성을 정직하게 다루기 위해 존재한다.", bookId:2, category:"science" },
+  { text:"불안은 우리가 삶에서 무엇을 원하는지를 알려주는 신호다.", bookId:4, category:"lit" },
+  { text:"부유해지는 것과 부를 유지하는 것은 완전히 다른 기술을 요구한다.", bookId:6, category:"invest" },
+  { text:"충분히라는 개념은 욕망이 아니라 선택이다.", bookId:6, category:"invest" },
+  { text:"습관은 목표가 아니라 시스템이다.", bookId:7, category:"self" },
+  { text:"그녀는 꿈을 꾸지 않았다. 꿈을 꾸기에 그녀는 너무 많은 것들을 기억하고 있었다.", bookId:8, category:"lit" },
+  { text:"편향은 제거할 수 없다. 다만 인식할 수 있을 뿐이다.", bookId:3, category:"phil" },
+  { text:"자신감은 반복에서 온다.", bookId:7, category:"self" },
+  { text:"신호는 드물고 소음은 넘친다.", bookId:2, category:"science" },
+];
+
+const CAT = {
+  invest:  { label:"💹 투자",    cls:"c-invest",  sp:"sp-invest",  dot:"#3ecf8e" },
+  phil:    { label:"🧠 철학",    cls:"c-phil",    sp:"sp-phil",    dot:"#9b7fe8" },
+  self:    { label:"🌱 자기계발", cls:"c-self",    sp:"sp-self",    dot:"#5b9cf6" },
+  lit:     { label:"✍️ 문학",    cls:"c-lit",     sp:"sp-lit",     dot:"#e8a44a" },
+  science: { label:"🔬 과학",    cls:"c-science", sp:"sp-science", dot:"#e879a0" },
+  other:   { label:"📦 기타",    cls:"c-other",   sp:"sp-other",   dot:"#8892b0" },
+};
+
+let books = [...BOOKS], quotes = [...QUOTES];
+let fCat = 'all', fQCat = 'all';
+let selData = null;
+
+// ─── 통계 ───
+function updateStats() {
+  document.getElementById('sTotalBooks').textContent = books.length;
+  document.getElementById('sTotalQuotes').textContent = quotes.length;
+  document.getElementById('sYearBooks').textContent = books.filter(b => (b.end||'').startsWith('2026')).length;
+}
+
+// ─── 내 서재 ───
+function renderBooks(list) {
+  const g = document.getElementById('bookGrid');
+  if (!list.length) { g.innerHTML='<div style="color:var(--text3);grid-column:1/-1;text-align:center;padding:48px">결과 없음</div>'; return; }
+  g.innerHTML = list.map(b => {
+    const c = CAT[b.category]||CAT.other;
+    const qc = quotes.filter(q=>q.bookId===b.id).length;
+    const coverHtml = b.cover
+      ? `<img src="${b.cover}" alt="">`
+      : `<div class="book-cover-ph">📖</div>`;
+    return `
+    <div class="book-card">
+      <div class="book-cover">${coverHtml}</div>
+      <div class="cat-bar ${c.sp}"></div>
+      <div class="book-body">
+        <span class="cat-tag ${c.cls}">${c.label}</span>
+        <div class="book-title">${b.title}</div>
+        <div class="book-author">${b.author}</div>
+        <div class="book-period">${b.start||'—'} → ${b.end||'—'}</div>
+      </div>
+      <div class="book-footer">
+        <div class="qcount">문장 <span>${qc}</span>개</div>
+        <button onclick="event.stopPropagation();openQuoteModalForBook(${b.id})"
+          style="font-size:11px;padding:3px 8px;border-radius:6px;background:var(--amber-bg);border:1px solid rgba(232,164,74,0.3);color:var(--amber);cursor:pointer;">
+          + 문장
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setF(cat, el) {
+  fCat = cat;
+  document.querySelectorAll('#panel-books .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); filterBooks();
+}
+function filterBooks() {
+  const q = document.getElementById('bSearch').value.toLowerCase();
+  let list = books;
+  if (fCat !== 'all') list = list.filter(b=>b.category===fCat);
+  if (q) list = list.filter(b=>b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q));
+  renderBooks(list);
+}
+
+// ─── 월별 기록 ───
+function renderMonthly() {
+  const byMonth = {};
+  books.forEach(b => {
+    const key = b.end || b.start || '미완료';
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(b);
+  });
+  const keys = Object.keys(byMonth).sort((a,b) => b.localeCompare(a));
+
+  document.getElementById('monthlyView').innerHTML = keys.map(key => {
+    const blist = byMonth[key];
+    const [yr, mo] = key.split('-');
+    const label = key === '미완료' ? '미완료' : `${yr}년 ${parseInt(mo)}월`;
+    const rows = blist.map(b => {
+      const c = CAT[b.category]||CAT.other;
+      const qc = quotes.filter(q=>q.bookId===b.id).length;
+      const coverHtml = b.cover
+        ? `<img src="${b.cover}" alt="">`
+        : `📖`;
+      return `
+      <div class="month-book-row">
+        <div class="month-cover">${b.cover ? `<img src="${b.cover}" alt="">` : '📖'}</div>
+        <div class="month-book-info">
+          <div class="month-book-title">${b.title}</div>
+          <div class="month-book-author">${b.author}</div>
+          <div class="month-book-period">${b.start||'—'} ~ ${b.end||'—'}</div>
+        </div>
+        <div class="month-book-right">
+          <span class="cat-tag ${c.cls}" style="font-size:10px;padding:2px 7px;">${c.label}</span>
+          <div class="month-qcount">문장 <span>${qc}</span>개</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-label">${label}</div>
+        <div class="month-count">${blist.length}권</div>
+      </div>
+      <div class="month-books">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── 문장 피드 ───
+function renderQuotes(list) {
+  const feed = document.getElementById('quoteFeed');
+  if (!list.length) { feed.innerHTML='<div style="color:var(--text3);text-align:center;padding:48px">결과 없음</div>'; return; }
+  feed.innerHTML = list.map(q => {
+    const b = books.find(x=>x.id===q.bookId);
+    const c = CAT[q.category]||CAT.other;
+    return `
+    <div class="quote-card">
+      <span class="qtag ${c.cls}">${c.label}</span>
+      <span class="qmark">"</span>
+      <div class="qtext">${q.text}</div>
+      <div class="qsource">
+        <div class="qdot" style="background:${c.dot}"></div>
+        <div>
+          <div class="qbook">${b?b.title:''}</div>
+          <div class="qauthor">${b?b.author:''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setQF(cat, el) {
+  fQCat = cat;
+  document.querySelectorAll('#panel-quotes .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); filterQuotes();
+}
+function filterQuotes() {
+  const q = document.getElementById('qSearch').value.toLowerCase();
+  let list = quotes;
+  if (fQCat !== 'all') list = list.filter(qt=>qt.category===fQCat);
+  if (q) list = list.filter(qt => {
+    const b = books.find(x=>x.id===qt.bookId);
+    return qt.text.toLowerCase().includes(q)||(b&&b.title.toLowerCase().includes(q));
+  });
+  renderQuotes(list);
+}
+
+// ─── 탭 ───
+function sw(name, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name==='monthly') renderMonthly();
+}
+
+// ─── 날짜 셀렉트 ───
+function fillDates() {
+  const yr = new Date().getFullYear();
+  ['sy','ey'].forEach(id => {
+    const s = document.getElementById(id);
+    s.innerHTML = '<option value="">연도</option>';
+    for (let y=yr;y>=yr-10;y--) s.innerHTML+=`<option value="${y}">${y}</option>`;
+  });
+  ['sm','em'].forEach(id => {
+    const s = document.getElementById(id);
+    s.innerHTML = '<option value="">월</option>';
+    for (let m=1;m<=12;m++) s.innerHTML+=`<option value="${String(m).padStart(2,'0')}">${m}월</option>`;
+  });
+}
+
+// ─── 책 등록 모달 ───
+function openBookModal() {
+  document.getElementById('bookBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeBookModal() {
+  document.getElementById('bookBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+  selData=null;
+  document.getElementById('selBook').classList.remove('show');
+  document.getElementById('sResults').style.display='none';
+  document.getElementById('sResults').innerHTML='';
+  document.getElementById('apiQ').value='';
+  document.getElementById('bMemo').value='';
+  ['sy','sm','ey','em'].forEach(id=>document.getElementById(id).value='');
+}
+function closeOuter(e, id) { if(e.target.id===id) { if(id==='bookBackdrop') closeBookModal(); else closeQuoteModal(); } }
+
+function doSearch() {
+  const q = document.getElementById('apiQ').value.trim();
+  if (!q) return;
+  const el = document.getElementById('sResults');
+  el.style.display='block';
+  el.innerHTML='<div style="padding:12px;color:var(--text3);font-size:13px">검색 중...</div>';
+
+  // 실제 연동 시: fetch(`APPS_SCRIPT_URL?q=${encodeURIComponent(q)}`)
+  // 지금은 더미
+  setTimeout(() => {
+    const dummy = [
+      { title:q, author:"저자", category:"invest", cover:"" },
+      { title:q+" (개정판)", author:"저자 B", category:"lit", cover:"" },
+    ];
+    window._sr = dummy;
+    el.innerHTML = dummy.map((r,i) => `
+      <div class="sitem" onclick="pickBook(${i})">
+        <div class="scover">📖</div>
+        <div class="sinfo">
+          <div class="stitle">${r.title}</div>
+          <div class="sauthor">${r.author}</div>
+          <div class="scat">${(CAT[r.category]||CAT.other).label}</div>
+        </div>
+      </div>`).join('');
+  }, 500);
+}
+
+function pickBook(i) {
+  selData = window._sr[i];
+  document.getElementById('sResults').style.display='none';
+  const sb = document.getElementById('selBook');
+  sb.classList.add('show');
+  document.getElementById('selTitle').textContent = selData.title;
+  document.getElementById('selAuthor').textContent = selData.author;
+  const c = CAT[selData.category]||CAT.other;
+  const ct = document.getElementById('selCat');
+  ct.textContent = c.label; ct.className = `selcat ${c.cls}`;
+  const cw = document.getElementById('selCoverWrap');
+  cw.innerHTML = selData.cover ? `<img src="${selData.cover}" alt="">` : '<span>📖</span>';
+}
+
+function resetSel() {
+  selData=null;
+  document.getElementById('selBook').classList.remove('show');
+  document.getElementById('apiQ').value='';
+}
+
+function saveBook() {
+  if (!selData) { alert('책을 선택해주세요!'); return; }
+  const sy = document.getElementById('sy').value;
+  const sm = document.getElementById('sm').value;
+  const ey = document.getElementById('ey').value;
+  const em = document.getElementById('em').value;
+  const nb = {
+    id: Date.now(),
+    title: selData.title, author: selData.author,
+    category: selData.category || 'other',
+    start: (sy&&sm)?`${sy}-${sm}`:'',
+    end:   (ey&&em)?`${ey}-${em}`:'',
+    cover: selData.cover || '',
+    memo: document.getElementById('bMemo').value,
+  };
+  books.unshift(nb);
+  updateStats(); filterBooks();
+  closeBookModal();
+}
+
+// ─── 문장 가져오기 모달 ───
+function openQuoteModal() {
+  fillQBookSel(null);
+  document.getElementById('rawQuotes').value='';
+  document.getElementById('qPreviewSec').style.display='none';
+  const btn = document.getElementById('qSaveBtn');
+  btn.disabled=true; btn.style.opacity='0.4';
+  document.getElementById('quoteBackdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function openQuoteModalForBook(bookId) {
+  openQuoteModal();
+  setTimeout(() => { document.getElementById('qBookSel').value = bookId; }, 50);
+}
+function closeQuoteModal() {
+  document.getElementById('quoteBackdrop').classList.remove('open');
+  document.body.style.overflow='';
+}
+function fillQBookSel(preId) {
+  const sel = document.getElementById('qBookSel');
+  sel.innerHTML = '<option value="">책 선택...</option>';
+  books.forEach(b => sel.innerHTML+=`<option value="${b.id}">${b.title} — ${b.author}</option>`);
+  if (preId) sel.value = preId;
+}
+function previewQ() {
+  const raw = document.getElementById('rawQuotes').value;
+  const parsed = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
+  const sec = document.getElementById('qPreviewSec');
+  const btn = document.getElementById('qSaveBtn');
+  if (!parsed.length) { sec.style.display='none'; btn.disabled=true; btn.style.opacity='0.4'; return; }
+  sec.style.display='block';
+  document.getElementById('qCount').textContent = `${parsed.length}개 인식됨`;
+  document.getElementById('qPreviewList').innerHTML = parsed.map((t,i)=>`
+    <div class="pitem"><span class="pnum">#${i+1}</span>${t}</div>`).join('');
+  btn.disabled=false; btn.style.opacity='1';
+}
+function saveQuotes() {
+  const bookId = parseInt(document.getElementById('qBookSel').value);
+  if (!bookId) { alert('책을 선택해주세요!'); return; }
+  const b = books.find(x=>x.id===bookId);
+  const raw = document.getElementById('rawQuotes').value;
+  const parsed = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
+  parsed.forEach(text => quotes.push({ text, bookId, category: b.category }));
+  updateStats(); filterQuotes();
+  closeQuoteModal();
+  const btn = document.querySelector('.btn-secondary');
+  const orig = btn.textContent;
+  btn.textContent = `✅ ${parsed.length}개 저장됨`;
+  setTimeout(()=>btn.textContent=orig, 2000);
+}
+
+// ─── 초기화 ───
+fillDates();
+updateStats();
+renderBooks(books);
+renderQuotes(quotes);
+</script>
+</body>
+</html>
