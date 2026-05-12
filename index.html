@@ -917,7 +917,7 @@ function doSearch() {
       const results = res.results || [];
       window._sr = results;
       if (!results.length) {
-        el.innerHTML='<div style="padding:12px;color:var(--ink-dim);font-size:13px;">검색 결과가 없어요.</div>';
+        el.innerHTML=`<div style="padding:12px;color:var(--ink-dim);font-size:12px;word-break:break-all;">결과없음. 응답: ${JSON.stringify(res).substring(0,200)}</div>`;
         return;
       }
       el.innerHTML = results.map((r,i) => `
