@@ -7,7 +7,7 @@
 const CONFIG = {
 
   // ── Apps Script 웹앱 URL ──
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbyoOSh-cRXMvH5448NYtYaLGXpTVsrG3qA97GOn6_i5tjgPkcXHeimNCyi5W0_2i_gGjQ/exec',
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyOxe74Un5pMjnTLjCbz6D-11xHiYvbpLxXLQreFZClqQapAVcR6KsRDUiSoTvZwKtM3A/exec';
 
   // ── 기본 설정 ──
   YEAR: 2026,           // 연간 통계 기준 연도
