@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="config.js"></script>
-<title>📚 독서 아카이브</title>
+<title>독서 아카이브</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -571,16 +571,31 @@ function showLoading(elId, msg='불러오는 중...') {
 // ─── GAS API 호출 ───
 async function gasGet(params) {
   const url = GAS_URL + '?' + new URLSearchParams(params).toString();
-  const res = await fetch(url);
-  return res.json();
+  const res = await fetch(url, {
+    redirect: 'follow',
+    mode: 'cors',
+  });
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch(e) {
+    throw new Error('응답 파싱 실패: ' + text.substring(0, 100));
+  }
 }
 
 async function gasPost(body) {
   const res = await fetch(GAS_URL, {
     method: 'POST',
+    redirect: 'follow',
+    mode: 'cors',
     body: JSON.stringify(body),
   });
-  return res.json();
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch(e) {
+    throw new Error('응답 파싱 실패: ' + text.substring(0, 100));
+  }
 }
 
 // ─── 초기 데이터 로드 ───
@@ -918,8 +933,8 @@ function doSearch() {
           </div>
         </div>`).join('');
     })
-    .catch(() => {
-      el.innerHTML='<div style="padding:12px;color:var(--neg);font-size:13px;">검색 오류가 발생했어요.</div>';
+    .catch((err) => {
+      el.innerHTML=`<div style="padding:12px;color:var(--neg);font-size:13px;">오류: ${err.message}</div>`;
     });
 }
 
