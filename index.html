@@ -5,363 +5,363 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="config.js"></script>
 <title>📚 독서 아카이브</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #080c18;
-  --bg2:      #0c1022;
-  --card:     #111628;
-  --card2:    #161d32;
-  --border:   #1e2640;
-  --border2:  #2a3358;
-  --text:     #dde2f0;
-  --text2:    #8892b0;
-  --text3:    #4a5270;
-  --amber:    #e8a44a;
-  --amber-bg: rgba(232,164,74,0.08);
-  --green:    #3ecf8e;
-  --blue:     #5b9cf6;
-  --pink:     #e879a0;
-  --purple:   #9b7fe8;
+  /* 배경 */
+  --bg:        #0a0a09;
+  --surface:   #0f0f0e;
+  --card:      #161513;
+  --card-hi:   #1c1b19;
+  /* 테두리 */
+  --border:     #2a2926;
+  --border-mid: #353330;
+  /* 텍스트 */
+  --ink:     #f0ede8;
+  --ink-mid: #9a9690;
+  --ink-dim: #565250;
+  /* 의미색 */
+  --pos:    #00c98a;
+  --neg:    #f04d62;
+  --accent: #e8b800;
+  --info:   #5aabf0;
+  --purple: #b8a8f0;
+  /* 레이아웃 */
+  --radius:    14px;
+  --radius-sm:  8px;
+  --radius-xs:  6px;
+  --pad:        16px;
+  --gap:        10px;
+  /* 폰트 */
+  --font-sans: 'Pretendard', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  background: #080c18 !important;
-  color: #dde2f0 !important;
-  font-family: 'Pretendard', -apple-system, sans-serif;
+  background: #0a0a09 !important;
+  color: #f0ede8 !important;
+  font-family: var(--font-sans);
   min-height: 100vh;
   font-size: 14px;
 }
 
 /* ─── HEADER ─── */
 .header {
-  padding: 28px 32px 0;
+  padding: 24px var(--pad) 0;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(91,156,246,0.04) 0%, transparent 100%);
   position: sticky; top: 0; z-index: 50;
+  background-color: rgba(15,15,14,0.94) !important;
   backdrop-filter: blur(12px);
-  background-color: rgba(8,12,24,0.92) !important;
 }
 .header-top {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
-.logo { display: flex; align-items: center; gap: 11px; }
+.logo { display: flex; align-items: center; gap: 10px; }
 .logo-icon {
-  width: 36px; height: 36px;
-  background: rgba(91,156,246,0.1);
-  border: 1px solid rgba(91,156,246,0.2);
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  width: 34px; height: 34px;
+  background: rgba(90,171,240,0.1);
+  border: 1px solid rgba(90,171,240,0.2);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
-.logo-text { font-family: 'Libre Baskerville', serif; font-size: 18px; }
-.logo-sub { font-size: 10px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+.logo-text { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--ink); }
+.logo-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); margin-top: 2px; letter-spacing: 0.5px; }
 
-.header-right { display: flex; align-items: center; gap: 20px; }
 .stat-mini { text-align: right; }
-.stat-mini-num { font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: var(--amber); line-height: 1; }
-.stat-mini-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.stat-mini-num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-mini-label { font-family: var(--font-sans); font-size: 10px; color: var(--ink-dim); margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
 
-.header-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+.header-btns { display: flex; gap: var(--gap); margin-bottom: 12px; }
 .btn-primary {
   display: flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 8px;
-  background: var(--amber); color: #000;
-  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
-  transition: opacity 0.15s;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  background: var(--accent); color: #000;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; transition: opacity 0.15s;
 }
 .btn-primary:hover { opacity: 0.85; }
 .btn-secondary {
-  padding: 7px 14px; border-radius: 8px;
-  background: var(--card2); border: 1px solid var(--border2);
-  color: var(--text2); font-size: 13px; cursor: pointer;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  background: rgba(90,171,240,0.12);
+  border: 1px solid rgba(90,171,240,0.25);
+  color: var(--info); font-family: var(--font-sans); font-size: 13px; cursor: pointer;
   transition: all 0.15s;
 }
-.btn-secondary:hover { color: var(--text); }
+.btn-secondary:hover { background: rgba(90,171,240,0.18); }
 
 .tabs { display: flex; }
 .tab {
-  padding: 10px 20px; font-size: 13px; font-weight: 500;
-  color: var(--text3); border-bottom: 2px solid transparent;
+  padding: 10px 18px; font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+  color: var(--ink-dim); border-bottom: 2px solid transparent;
   cursor: pointer; transition: all 0.15s; user-select: none;
 }
-.tab:hover { color: var(--text2); }
-.tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+.tab:hover { color: var(--ink-mid); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ─── CONTENT ─── */
-.content { padding: 28px 32px; max-width: 1200px; }
+.content { padding: 24px var(--pad); max-width: 1200px; }
 .panel { display: none; }
 .panel.active { display: block; }
 
 /* ─── FILTER BAR ─── */
-.filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+.filter-bar { display: flex; align-items: center; gap: var(--gap); margin-bottom: 20px; flex-wrap: wrap; }
 .search-wrap { position: relative; flex:1; min-width:160px; max-width:260px; }
 .search-wrap input {
-  width:100%; background:var(--card); border:1px solid var(--border);
-  border-radius:8px; padding:8px 12px 8px 32px;
-  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none;
+  width:100%; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px 8px 30px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none;
 }
-.search-wrap input:focus { border-color:var(--border2); }
-.search-wrap input::placeholder { color:var(--text3); }
-.si { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:12px; }
+.search-wrap input:focus { border-color: var(--border-mid); }
+.search-wrap input::placeholder { color: var(--ink-dim); }
+.si { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--ink-dim); font-size:12px; }
+
 .chip {
-  padding:6px 12px; border-radius:20px; border:1px solid var(--border);
-  background:var(--card); color:var(--text2); font-size:12px; cursor:pointer;
-  transition:all 0.15s; white-space:nowrap;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 12px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
-.chip:hover { border-color:var(--border2); color:var(--text); }
-.chip.on { border-color:var(--amber); color:var(--amber); background:var(--amber-bg); }
+.chip:hover { border-color: var(--border-mid); color: var(--ink); }
+.chip.on { border-color: var(--accent); color: var(--accent); background: rgba(232,184,0,0.08); }
 
 /* ─── 내 서재 그리드 ─── */
-.book-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; }
+.book-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap: var(--gap); }
 .book-card {
-  background:var(--card); border:1px solid var(--border);
-  border-radius:12px; overflow:hidden; cursor:pointer;
-  transition:border-color 0.15s, transform 0.15s;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
 }
-.book-card:hover { border-color:var(--border2); transform:translateY(-2px); }
+.book-card:hover { border-color: var(--border-mid); transform: translateY(-2px); }
 .book-cover {
-  width:100%; height:150px; background:var(--card2);
+  width:100%; height:150px; background: var(--card-hi);
   display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
 .book-cover img { width:100%; height:100%; object-fit:cover; }
-.book-cover-ph { font-size:36px; opacity:0.25; }
+.book-cover-ph { font-size:36px; opacity:0.2; }
 .cat-bar { height:3px; }
-.book-body { padding:13px; }
+.book-body { padding: var(--pad); }
 .cat-tag {
-  font-size:10px; padding:2px 7px; border-radius:6px; border:1px solid;
-  display:inline-flex; margin-bottom:7px;
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 7px; border-radius: var(--radius-xs); border: 1px solid;
+  display: inline-flex; margin-bottom: var(--gap);
 }
-.book-title { font-family:'Libre Baskerville',serif; font-size:14px; line-height:1.4; margin-bottom:3px; }
-.book-author { font-size:12px; color:var(--text3); margin-bottom:8px; }
-.book-period { font-size:11px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
+.book-title { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 3px; }
+.book-author { font-family: var(--font-sans); font-size: 13px; color: var(--ink-mid); margin-bottom: var(--gap); }
+.book-period { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
 .book-footer {
-  padding:8px 13px; background:var(--bg2); border-top:1px solid var(--border);
+  padding: 8px var(--pad); background: var(--surface); border-top: 1px solid var(--border);
   display:flex; justify-content:space-between; align-items:center;
 }
-.qcount { font-size:11px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
-.qcount span { color:var(--amber); }
+.qcount { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.qcount span { color: var(--accent); font-weight: 700; }
 
 /* ─── 월별 기록 ─── */
-.month-group { margin-bottom: 36px; }
+.month-group { margin-bottom: 32px; }
 .month-header {
-  display: flex; align-items: baseline; gap: 10px;
-  margin-bottom: 14px; padding-bottom: 10px;
+  display: flex; align-items: baseline; gap: var(--gap);
+  margin-bottom: 12px; padding-bottom: var(--gap);
   border-bottom: 1px solid var(--border);
 }
-.month-label {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 22px; color: var(--text);
-}
-.month-count { font-size: 12px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
-.month-books { display: flex; flex-direction: column; gap: 10px; }
+.month-label { font-family: var(--font-sans); font-size: 20px; font-weight: 700; color: var(--ink); }
+.month-count { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
+.month-books { display: flex; flex-direction: column; gap: var(--gap); }
 .month-book-row {
   display: flex; align-items: center; gap: 14px;
   background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px; cursor: pointer;
+  border-radius: var(--radius); padding: var(--pad); cursor: pointer;
   transition: border-color 0.15s;
 }
-.month-book-row:hover { border-color: var(--border2); }
+.month-book-row:hover { border-color: var(--border-mid); }
 .month-cover {
-  width: 44px; height: 60px; border-radius: 4px;
-  object-fit: cover; background: var(--card2);
-  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 60px; border-radius: var(--radius-xs);
+  background: var(--card-hi); display: flex; align-items: center; justify-content: center;
   font-size: 20px; opacity: 0.4; flex-shrink: 0; overflow: hidden;
 }
 .month-cover img { width:100%; height:100%; object-fit:cover; opacity:1; }
 .month-book-info { flex: 1; min-width: 0; }
-.month-book-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-.month-book-author { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-.month-book-period {
-  font-size: 11px; color: var(--text3);
-  font-family: 'IBM Plex Mono', monospace;
-}
+.month-book-title { font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.month-book-author { font-family: var(--font-sans); font-size: 13px; color: var(--ink-mid); margin-bottom: 5px; }
+.month-book-period { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
 .month-book-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
-.month-qcount {
-  font-size: 11px; color: var(--text3);
-  font-family: 'IBM Plex Mono', monospace;
-}
-.month-qcount span { color: var(--amber); }
+.month-qcount { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.month-qcount span { color: var(--accent); font-weight: 700; }
 
 /* ─── 문장 피드 ─── */
-.quote-feed { columns: 3; column-gap: 16px; }
+.quote-feed { columns: 3; column-gap: var(--gap); }
 @media (max-width: 900px) { .quote-feed { columns: 2; } }
 @media (max-width: 580px) { .quote-feed { columns: 1; } }
 .quote-card {
   break-inside: avoid; background: var(--card);
-  border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px; margin-bottom: 16px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: var(--pad); margin-bottom: var(--gap); cursor: pointer;
   transition: border-color 0.15s; position: relative;
 }
-.quote-card:hover { border-color: var(--border2); }
+.quote-card:hover { border-color: var(--border-mid); }
 .qmark {
-  font-family: 'Libre Baskerville', serif; font-size: 44px;
-  line-height: 0.6; color: var(--amber); opacity: 0.2;
-  display: block; margin-bottom: 10px;
+  font-family: var(--font-sans); font-size: 40px; font-weight: 700;
+  line-height: 0.7; color: var(--accent); opacity: 0.25;
+  display: block; margin-bottom: var(--gap);
 }
 .qtext {
-  font-family: 'Libre Baskerville', serif; font-size: 14px;
-  line-height: 1.75; color: var(--text); font-style: italic; margin-bottom: 14px;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 400;
+  line-height: 1.75; color: var(--ink); margin-bottom: 14px;
 }
 .qsource { display: flex; align-items: center; gap: 8px; }
 .qdot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
-.qbook { font-size: 12px; color: var(--text2); }
-.qauthor { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
-.qtag { position:absolute; top:13px; right:13px; font-size:10px; padding:2px 7px; border-radius:6px; }
+.qbook { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--ink-mid); }
+.qauthor { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); }
+.qtag {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 7px; border-radius: var(--radius-xs);
+}
 
-/* 카테고리 */
-.c-invest  { background:rgba(62,207,142,0.1);  color:#3ecf8e; border-color:rgba(62,207,142,0.25);  }
-.c-phil    { background:rgba(155,127,232,0.1); color:#9b7fe8; border-color:rgba(155,127,232,0.25); }
-.c-self    { background:rgba(91,156,246,0.1);  color:#5b9cf6; border-color:rgba(91,156,246,0.25);  }
-.c-lit     { background:rgba(232,164,74,0.1);  color:#e8a44a; border-color:rgba(232,164,74,0.25);  }
-.c-science { background:rgba(232,121,160,0.1); color:#e879a0; border-color:rgba(232,121,160,0.25); }
-.c-other   { background:rgba(136,146,176,0.1); color:#8892b0; border-color:rgba(136,146,176,0.25); }
-.sp-invest  { background:linear-gradient(90deg,#3ecf8e,#2aa870); }
-.sp-phil    { background:linear-gradient(90deg,#9b7fe8,#7555cc); }
-.sp-self    { background:linear-gradient(90deg,#5b9cf6,#3a70c8); }
-.sp-lit     { background:linear-gradient(90deg,#e8a44a,#c47e25); }
-.sp-science { background:linear-gradient(90deg,#e879a0,#b84d78); }
-.sp-other   { background:linear-gradient(90deg,#8892b0,#5a6080); }
+/* ─── 카테고리 색상 ─── */
+.c-invest  { background:rgba(0,201,138,0.1);   color:var(--pos);    border-color:rgba(0,201,138,0.3);   }
+.c-phil    { background:rgba(184,168,240,0.1); color:var(--purple); border-color:rgba(184,168,240,0.3); }
+.c-self    { background:rgba(90,171,240,0.1);  color:var(--info);   border-color:rgba(90,171,240,0.3);  }
+.c-lit     { background:rgba(232,184,0,0.1);   color:var(--accent); border-color:rgba(232,184,0,0.3);   }
+.c-science { background:rgba(240,77,98,0.1);   color:var(--neg);    border-color:rgba(240,77,98,0.3);   }
+.c-other   { background:rgba(154,150,144,0.1); color:var(--ink-mid);border-color:rgba(154,150,144,0.3); }
+.sp-invest  { background: var(--pos); }
+.sp-phil    { background: var(--purple); }
+.sp-self    { background: var(--info); }
+.sp-lit     { background: var(--accent); }
+.sp-science { background: var(--neg); }
+.sp-other   { background: var(--ink-dim); }
 
-/* ─── 책 등록 모달 ─── */
+/* ─── 모달 ─── */
 .backdrop {
   display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.72); z-index:100;
+  background:rgba(0,0,0,0.75); z-index:100;
   align-items:center; justify-content:center;
 }
 .backdrop.open { display:flex; }
 .modal {
-  background:var(--card); border:1px solid var(--border2);
-  border-radius:16px; width:520px; max-width:95vw;
-  max-height:90vh; overflow-y:auto; padding:28px;
+  background: var(--card); border: 1px solid var(--border-mid);
+  border-radius: var(--radius); width: 520px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto; padding: 24px;
 }
 .modal-hd {
   display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:22px;
+  margin-bottom: 20px;
 }
-.modal-title { font-family:'Libre Baskerville',serif; font-size:18px; }
+.modal-title { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--ink); }
 .modal-x {
-  width:28px; height:28px; border-radius:6px;
-  background:var(--card2); border:1px solid var(--border);
-  color:var(--text2); font-size:16px; cursor:pointer;
+  width: 28px; height: 28px; border-radius: var(--radius-xs);
+  background: var(--card-hi); border: 1px solid var(--border);
+  color: var(--ink-mid); font-size: 16px; cursor: pointer;
   display:flex; align-items:center; justify-content:center;
 }
-.modal-x:hover { color:var(--text); }
-.mlabel { font-size:12px; color:var(--text3); font-weight:500; margin-bottom:6px; }
-.msec { margin-bottom:18px; }
-.mrow { display:flex; gap:8px; }
+.modal-x:hover { color: var(--ink); }
+.mlabel {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.msec { margin-bottom: 16px; }
+.mrow { display:flex; gap: var(--gap); }
 .minput {
-  flex:1; background:var(--bg2); border:1px solid var(--border);
-  border-radius:8px; padding:9px 12px;
-  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none;
+  flex:1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none;
 }
-.minput:focus { border-color:var(--border2); }
-.minput::placeholder { color:var(--text3); }
+.minput:focus { border-color: var(--border-mid); }
+.minput::placeholder { color: var(--ink-dim); }
 .mselect {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:8px; padding:9px 8px;
-  color:var(--text); font-size:13px; font-family:'Pretendard',sans-serif; outline:none; cursor:pointer;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 8px;
+  color: var(--ink); font-size: 13px; font-family: var(--font-sans); outline: none; cursor: pointer;
 }
-.mselect option { background:var(--bg2); }
+.mselect option { background: var(--surface); }
 .mbtn {
-  padding:9px 14px; border-radius:8px;
-  background:var(--card2); border:1px solid var(--border2);
-  color:var(--text2); font-size:13px; cursor:pointer; white-space:nowrap;
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  background: var(--card-hi); border: 1px solid var(--border-mid);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 13px; cursor: pointer; white-space: nowrap;
 }
-.mbtn:hover { color:var(--text); }
+.mbtn:hover { color: var(--ink); }
 
-/* 검색 결과 */
 .sresults {
-  margin-top:8px; background:var(--bg2);
-  border:1px solid var(--border); border-radius:8px; overflow:hidden; display:none;
+  margin-top: 8px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; display: none;
 }
 .sitem {
-  display:flex; gap:11px; padding:10px 12px;
-  border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.1s;
+  display:flex; gap: 11px; padding: 10px 12px;
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s;
 }
-.sitem:last-child { border-bottom:none; }
-.sitem:hover { background:var(--card); }
+.sitem:last-child { border-bottom: none; }
+.sitem:hover { background: var(--card); }
 .scover {
   width:34px; height:46px; border-radius:3px; flex-shrink:0;
-  background:var(--card); object-fit:cover;
-  display:flex; align-items:center; justify-content:center; font-size:16px; overflow:hidden;
+  background: var(--card-hi); display:flex; align-items:center; justify-content:center; font-size:16px; overflow:hidden;
 }
 .scover img { width:100%; height:100%; object-fit:cover; }
 .sinfo { flex:1; min-width:0; }
-.stitle { font-size:13px; color:var(--text); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.sauthor { font-size:11px; color:var(--text3); margin-top:2px; }
-.scat { font-size:10px; color:var(--blue); margin-top:3px; }
+.stitle { font-family: var(--font-sans); font-size:13px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sauthor { font-family: var(--font-sans); font-size:12px; color:var(--ink-mid); margin-top:2px; }
+.scat { font-family: var(--font-mono); font-size:10px; color:var(--info); margin-top:3px; }
 
-/* 선택된 책 */
 .selbook {
-  display:none; background:var(--bg2); border:1px solid var(--border);
-  border-radius:8px; padding:12px; gap:12px; align-items:center;
-  margin-bottom:18px;
+  display:none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px; gap: 12px; align-items:center;
+  margin-bottom: 16px;
 }
 .selbook.show { display:flex; }
 .selcover {
-  width:42px; height:58px; border-radius:4px; flex-shrink:0;
-  object-fit:cover; background:var(--card);
-  display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden;
+  width:42px; height:58px; border-radius: var(--radius-xs); flex-shrink:0;
+  background: var(--card-hi); display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden;
 }
 .selcover img { width:100%; height:100%; object-fit:cover; }
 .selinfo { flex:1; }
-.seltitle { font-size:14px; font-weight:600; color:var(--text); }
-.selauthor { font-size:12px; color:var(--text3); margin-top:2px; }
-.selcat { font-size:10px; margin-top:5px; padding:2px 7px; border-radius:6px; border:1px solid; display:inline-flex; }
-.chgbtn { background:none; border:none; color:var(--text3); font-size:11px; cursor:pointer; flex-shrink:0; }
+.seltitle { font-family: var(--font-sans); font-size:14px; font-weight:700; color:var(--ink); }
+.selauthor { font-family: var(--font-sans); font-size:13px; color:var(--ink-mid); margin-top:2px; }
+.selcat { font-size:11px; font-weight:600; margin-top:5px; padding:2px 7px; border-radius:var(--radius-xs); border:1px solid; display:inline-flex; text-transform:uppercase; letter-spacing:0.4px; }
+.chgbtn { background:none; border:none; color:var(--ink-dim); font-size:11px; cursor:pointer; flex-shrink:0; }
 
-/* 날짜 */
-.date-row {
-  display:grid; grid-template-columns:1fr auto 1fr;
-  align-items:center; gap:8px;
-}
-.date-grp {}
+.date-row { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; }
 .date-selects { display:flex; gap:5px; }
-.darrow { text-align:center; color:var(--text3); padding-top:18px; }
+.darrow { text-align:center; color:var(--ink-dim); padding-top:18px; font-family:var(--font-mono); }
 
-/* 메모 */
 .mtextarea {
-  width:100%; background:var(--bg2); border:1px solid var(--border);
-  border-radius:8px; padding:10px 12px;
-  color:var(--text); font-size:13px; line-height:1.6;
-  font-family:'Pretendard',sans-serif; outline:none;
-  resize:vertical; min-height:72px;
+  width:100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  color: var(--ink); font-size: 13px; line-height: 1.6;
+  font-family: var(--font-sans); outline: none;
+  resize: vertical; min-height: 72px;
 }
-.mtextarea:focus { border-color:var(--border2); }
-.mtextarea::placeholder { color:var(--text3); }
+.mtextarea:focus { border-color: var(--border-mid); }
+.mtextarea::placeholder { color: var(--ink-dim); }
 
 .modal-ft {
-  display:flex; gap:8px; justify-content:flex-end;
-  margin-top:22px; padding-top:18px; border-top:1px solid var(--border);
+  display:flex; gap: var(--gap); justify-content:flex-end;
+  margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
 }
 .btn-cancel {
-  padding:9px 18px; border-radius:8px;
-  background:transparent; border:1px solid var(--border);
-  color:var(--text2); font-size:13px; cursor:pointer;
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  background: transparent; border: 1px solid var(--border);
+  color: var(--ink-mid); font-family: var(--font-sans); font-size: 13px; cursor: pointer;
 }
 .btn-save {
-  padding:9px 22px; border-radius:8px;
-  background:var(--amber); border:none;
-  color:#000; font-size:13px; font-weight:600; cursor:pointer;
+  padding: 8px 20px; border-radius: var(--radius-sm);
+  background: var(--accent); border: none;
+  color: #000; font-family: var(--font-sans); font-size: 13px; font-weight: 700; cursor: pointer;
 }
 
-/* 문장 가져오기 모달 */
-.preview-list {
-  display:flex; flex-direction:column; gap:7px;
-  max-height:180px; overflow-y:auto;
-}
+.preview-list { display:flex; flex-direction:column; gap:7px; max-height:180px; overflow-y:auto; }
 .pitem {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:7px; padding:9px 11px;
-  font-family:'Libre Baskerville',serif; font-size:13px;
-  font-style:italic; color:var(--text); line-height:1.6;
-  position:relative;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); padding: 9px 11px;
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--ink); line-height: 1.6; position: relative;
 }
 .pnum {
   position:absolute; top:6px; right:8px;
-  font-size:10px; color:var(--text3);
-  font-style:normal; font-family:'IBM Plex Mono',monospace;
+  font-family: var(--font-mono); font-size:10px; color:var(--ink-dim);
 }
 </style>
 </head>
@@ -544,53 +544,64 @@ html, body {
 </div>
 
 <script>
-// ─── 데이터 ───
-const BOOKS = [
-  { id:1, title:"현명한 투자자", author:"벤저민 그레이엄", category:"invest",
-    start:"2026-03", end:"2026-04", cover:"", memo:"투자의 바이블." },
-  { id:2, title:"신호와 소음", author:"네이트 실버", category:"science",
-    start:"2026-03", end:"2026-04", cover:"", memo:"예측의 한계와 가능성." },
-  { id:3, title:"생각에 관한 생각", author:"대니얼 카너먼", category:"phil",
-    start:"2025-12", end:"2026-01", cover:"", memo:"시스템1과 시스템2." },
-  { id:4, title:"불안", author:"알랭 드 보통", category:"lit",
-    start:"2026-04", end:"2026-05", cover:"", memo:"지위 불안의 근원." },
-  { id:5, title:"인생을 위한 최소한의 생각", author:"미상", category:"self",
-    start:"2026-04", end:"2026-04", cover:"", memo:"" },
-  { id:6, title:"돈의 심리학", author:"모건 하우절", category:"invest",
-    start:"2025-07", end:"2025-08", cover:"", memo:"돈은 행동이다." },
-  { id:7, title:"아주 작은 습관의 힘", author:"제임스 클리어", category:"self",
-    start:"2025-05", end:"2025-06", cover:"", memo:"시스템이 목표를 이긴다." },
-  { id:8, title:"채식주의자", author:"한강", category:"lit",
-    start:"2025-09", end:"2025-09", cover:"", memo:"불편하지만 멈출 수 없었다." },
-];
+// ─── GAS URL (config.js에서 로드) ───
+const GAS_URL = (typeof CONFIG !== 'undefined') ? CONFIG.GAS_URL
+  : 'https://script.google.com/macros/s/AKfycbyoOSh-cRXMvH5448NYtYaLGXpTVsrG3qA97GOn6_i5tjgPkcXHeimNCyi5W0_2i_gGjQ/exec';
 
-const QUOTES = [
-  { text:"투자에서 가장 위험한 문장은 '이번엔 다르다'는 말이다.", bookId:1, category:"invest" },
-  { text:"미스터 마켓은 당신의 주인이 아니라 하인이다. 그의 가격을 이용하라, 지배받지 말고.", bookId:1, category:"invest" },
-  { text:"우리는 우리가 생각하는 것보다 훨씬 적게 생각한다. 대부분은 그냥 느끼는 것이다.", bookId:3, category:"phil" },
-  { text:"예측이란 틀리기 위해 존재하는 것이 아니라, 불확실성을 정직하게 다루기 위해 존재한다.", bookId:2, category:"science" },
-  { text:"불안은 우리가 삶에서 무엇을 원하는지를 알려주는 신호다.", bookId:4, category:"lit" },
-  { text:"부유해지는 것과 부를 유지하는 것은 완전히 다른 기술을 요구한다.", bookId:6, category:"invest" },
-  { text:"충분히라는 개념은 욕망이 아니라 선택이다.", bookId:6, category:"invest" },
-  { text:"습관은 목표가 아니라 시스템이다.", bookId:7, category:"self" },
-  { text:"그녀는 꿈을 꾸지 않았다. 꿈을 꾸기에 그녀는 너무 많은 것들을 기억하고 있었다.", bookId:8, category:"lit" },
-  { text:"편향은 제거할 수 없다. 다만 인식할 수 있을 뿐이다.", bookId:3, category:"phil" },
-  { text:"자신감은 반복에서 온다.", bookId:7, category:"self" },
-  { text:"신호는 드물고 소음은 넘친다.", bookId:2, category:"science" },
-];
-
+// ─── 카테고리 ───
 const CAT = {
-  invest:  { label:"💹 투자",    cls:"c-invest",  sp:"sp-invest",  dot:"#3ecf8e" },
-  phil:    { label:"🧠 철학",    cls:"c-phil",    sp:"sp-phil",    dot:"#9b7fe8" },
-  self:    { label:"🌱 자기계발", cls:"c-self",    sp:"sp-self",    dot:"#5b9cf6" },
-  lit:     { label:"✍️ 문학",    cls:"c-lit",     sp:"sp-lit",     dot:"#e8a44a" },
-  science: { label:"🔬 과학",    cls:"c-science", sp:"sp-science", dot:"#e879a0" },
-  other:   { label:"📦 기타",    cls:"c-other",   sp:"sp-other",   dot:"#8892b0" },
+  invest:  { label:"💹 투자",    cls:"c-invest",  sp:"sp-invest",  dot:"#00c98a" },
+  phil:    { label:"🧠 철학",    cls:"c-phil",    sp:"sp-phil",    dot:"#b8a8f0" },
+  self:    { label:"🌱 자기계발", cls:"c-self",    sp:"sp-self",    dot:"#5aabf0" },
+  lit:     { label:"✍️ 문학",    cls:"c-lit",     sp:"sp-lit",     dot:"#e8b800" },
+  science: { label:"🔬 과학",    cls:"c-science", sp:"sp-science", dot:"#f04d62" },
+  other:   { label:"📦 기타",    cls:"c-other",   sp:"sp-other",   dot:"#9a9690" },
 };
 
-let books = [...BOOKS], quotes = [...QUOTES];
+let books = [], quotes = [];
 let fCat = 'all', fQCat = 'all';
 let selData = null;
+
+// ─── 로딩 표시 ───
+function showLoading(elId, msg='불러오는 중...') {
+  const el = document.getElementById(elId);
+  if (el) el.innerHTML = `<div style="color:var(--ink-dim);text-align:center;padding:48px;font-family:var(--font-mono);font-size:12px;">${msg}</div>`;
+}
+
+// ─── GAS API 호출 ───
+async function gasGet(params) {
+  const url = GAS_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function gasPost(body) {
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
+
+// ─── 초기 데이터 로드 ───
+async function loadAll() {
+  showLoading('bookGrid', '📚 서재 불러오는 중...');
+  showLoading('quoteFeed', '✍️ 문장 불러오는 중...');
+  try {
+    const [bRes, qRes] = await Promise.all([
+      gasGet({ action: 'getBooks' }),
+      gasGet({ action: 'getQuotes' }),
+    ]);
+    books  = (bRes.books  || []).map(b => ({ ...b, id: b.id?.toString() }));
+    quotes = (qRes.quotes || []).map(q => ({ ...q, bookId: q.bookId?.toString() }));
+  } catch(e) {
+    books = []; quotes = [];
+    console.error('데이터 로드 실패:', e);
+  }
+  updateStats();
+  filterBooks();
+  filterQuotes();
+}
 
 // ─── 통계 ───
 function updateStats() {
@@ -769,33 +780,6 @@ function closeBookModal() {
 }
 function closeOuter(e, id) { if(e.target.id===id) { if(id==='bookBackdrop') closeBookModal(); else closeQuoteModal(); } }
 
-function doSearch() {
-  const q = document.getElementById('apiQ').value.trim();
-  if (!q) return;
-  const el = document.getElementById('sResults');
-  el.style.display='block';
-  el.innerHTML='<div style="padding:12px;color:var(--text3);font-size:13px">검색 중...</div>';
-
-  // 실제 연동 시: fetch(`APPS_SCRIPT_URL?q=${encodeURIComponent(q)}`)
-  // 지금은 더미
-  setTimeout(() => {
-    const dummy = [
-      { title:q, author:"저자", category:"invest", cover:"" },
-      { title:q+" (개정판)", author:"저자 B", category:"lit", cover:"" },
-    ];
-    window._sr = dummy;
-    el.innerHTML = dummy.map((r,i) => `
-      <div class="sitem" onclick="pickBook(${i})">
-        <div class="scover">📖</div>
-        <div class="sinfo">
-          <div class="stitle">${r.title}</div>
-          <div class="sauthor">${r.author}</div>
-          <div class="scat">${(CAT[r.category]||CAT.other).label}</div>
-        </div>
-      </div>`).join('');
-  }, 500);
-}
-
 function pickBook(i) {
   selData = window._sr[i];
   document.getElementById('sResults').style.display='none';
@@ -816,24 +800,34 @@ function resetSel() {
   document.getElementById('apiQ').value='';
 }
 
-function saveBook() {
+async function saveBook() {
   if (!selData) { alert('책을 선택해주세요!'); return; }
   const sy = document.getElementById('sy').value;
   const sm = document.getElementById('sm').value;
   const ey = document.getElementById('ey').value;
   const em = document.getElementById('em').value;
-  const nb = {
-    id: Date.now(),
-    title: selData.title, author: selData.author,
-    category: selData.category || 'other',
-    start: (sy&&sm)?`${sy}-${sm}`:'',
-    end:   (ey&&em)?`${ey}-${em}`:'',
-    cover: selData.cover || '',
-    memo: document.getElementById('bMemo').value,
+  const data = {
+    title:       selData.title,
+    author:      selData.author,
+    category:    selData.category || 'other',
+    categoryRaw: selData.categoryRaw || '',
+    start:       (sy&&sm)?`${sy}-${sm}`:'',
+    end:         (ey&&em)?`${ey}-${em}`:'',
+    cover:       selData.cover || '',
+    memo:        document.getElementById('bMemo').value,
   };
-  books.unshift(nb);
-  updateStats(); filterBooks();
-  closeBookModal();
+  try {
+    const res = await gasPost({ action: 'saveBook', data });
+    if (res.success) {
+      books.unshift({ ...data, id: res.id });
+      updateStats(); filterBooks();
+      closeBookModal();
+    } else {
+      alert('저장 실패: ' + (res.error||'알 수 없는 오류'));
+    }
+  } catch(e) {
+    alert('저장 중 오류가 발생했어요.');
+  }
 }
 
 // ─── 문장 가져오기 모달 ───
@@ -872,26 +866,66 @@ function previewQ() {
     <div class="pitem"><span class="pnum">#${i+1}</span>${t}</div>`).join('');
   btn.disabled=false; btn.style.opacity='1';
 }
-function saveQuotes() {
-  const bookId = parseInt(document.getElementById('qBookSel').value);
+async function saveQuotes() {
+  const bookId = document.getElementById('qBookSel').value;
   if (!bookId) { alert('책을 선택해주세요!'); return; }
   const b = books.find(x=>x.id===bookId);
   const raw = document.getElementById('rawQuotes').value;
-  const parsed = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
-  parsed.forEach(text => quotes.push({ text, bookId, category: b.category }));
-  updateStats(); filterQuotes();
-  closeQuoteModal();
-  const btn = document.querySelector('.btn-secondary');
-  const orig = btn.textContent;
-  btn.textContent = `✅ ${parsed.length}개 저장됨`;
-  setTimeout(()=>btn.textContent=orig, 2000);
+  const texts = raw.split(/\n{2,}/).map(s=>s.replace(/\n/g,' ').trim()).filter(s=>s.length>4);
+  try {
+    const res = await gasPost({
+      action: 'saveQuotes',
+      data: { bookId, bookTitle: b?.title||'', category: b?.category||'other', texts }
+    });
+    if (res.success) {
+      texts.forEach(text => quotes.push({ text, bookId, category: b?.category||'other' }));
+      updateStats(); filterQuotes();
+      closeQuoteModal();
+      const btn = document.querySelector('.btn-secondary');
+      const orig = btn.textContent;
+      btn.textContent = `✅ ${texts.length}개 저장됨`;
+      setTimeout(()=>btn.textContent=orig, 2000);
+    } else {
+      alert('저장 실패: ' + (res.error||'알 수 없는 오류'));
+    }
+  } catch(e) {
+    alert('저장 중 오류가 발생했어요.');
+  }
+}
+
+function doSearch() {
+  const q = document.getElementById('apiQ').value.trim();
+  if (!q) return;
+  const el = document.getElementById('sResults');
+  el.style.display='block';
+  el.innerHTML='<div style="padding:12px;color:var(--ink-dim);font-size:13px;font-family:var(--font-mono);">검색 중...</div>';
+
+  gasGet({ action: 'search', q })
+    .then(res => {
+      const results = res.results || [];
+      window._sr = results;
+      if (!results.length) {
+        el.innerHTML='<div style="padding:12px;color:var(--ink-dim);font-size:13px;">검색 결과가 없어요.</div>';
+        return;
+      }
+      el.innerHTML = results.map((r,i) => `
+        <div class="sitem" onclick="pickBook(${i})">
+          <div class="scover">${r.cover ? `<img src="${r.cover}" alt="">` : '📖'}</div>
+          <div class="sinfo">
+            <div class="stitle">${r.title}</div>
+            <div class="sauthor">${r.author}</div>
+            <div class="scat">${(CAT[r.category]||CAT.other).label}</div>
+          </div>
+        </div>`).join('');
+    })
+    .catch(() => {
+      el.innerHTML='<div style="padding:12px;color:var(--neg);font-size:13px;">검색 오류가 발생했어요.</div>';
+    });
 }
 
 // ─── 초기화 ───
 fillDates();
-updateStats();
-renderBooks(books);
-renderQuotes(quotes);
+loadAll();
 </script>
 </body>
 </html>
